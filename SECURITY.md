@@ -12,13 +12,3 @@ This project is now configured with basic production security defaults, but a pu
 - Uploads are limited to 8 MB and image extensions are restricted.
 - Admin users can be bootstrapped with `ADMIN_EMAILS`.
 
-## Recommended Before Public Launch
-
-- Use HTTPS only.
-- Use a long random `SECRET_KEY`.
-- Store uploads outside the repo or in object storage.
-- Add email verification.
-- Add password reset.
-- Add rate limiting for login, registration, posting, and messaging.
-- Add virus scanning or stronger MIME validation for uploads.
-- Add privacy policy and terms pages.
