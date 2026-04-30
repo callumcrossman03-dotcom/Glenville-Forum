@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Communities - Glenville State Forums{% endblock %}
+
+{% block content %}
+  <section class="feed-header">
+    <div>
+      <h1>Communities</h1>
+      <p>Pick a space for the conversation you want to join.</p>
+    </div>
+    {% if current_user.is_authenticated %}
+      <a class="button button-primary" href="{{ url_for('forum.create_community') }}">Create Community</a>
+    {% endif %}
+  </section>
+
+  <section class="community-grid">
+    {% for community in communities %}
+      <article class="community-card">
+        <div class="community-icon">{{ community.icon }}</div>
+        <a class="community-title" href="{{ url_for('forum.community_detail', slug=community.slug) }}">c/{{ community.slug }}</a>
+        <p>{{ community.description }}</p>
+        <div class="meta">{{ community.posts|length }} posts</div>
+      </article>
+    {% endfor %}
+  </section>
+{% endblock %}

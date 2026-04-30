@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}c/{{ community.slug }} - Glenville State Forums{% endblock %}
+
+{% block content %}
+  <section class="feed-header">
+    <div>
+      <h1>c/{{ community.slug }}</h1>
+      <p>{{ community.description }}</p>
+    </div>
+    <div class="header-actions">
+      {% if current_user.is_authenticated %}
+        <form action="{{ url_for('forum.toggle_membership', slug=community.slug) }}" method="post">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+          <button class="button {{ 'button-ghost' if is_joined else 'button-primary' }}" type="submit">
+            {{ 'Joined' if is_joined else 'Join' }}
+          </button>
+        </form>
+      {% endif %}
+      <div class="segmented">
+        <a class="{{ 'active' if sort == 'hot' else '' }}" href="{{ url_for('forum.community_detail', slug=community.slug, sort='hot', q=search) }}">Hot</a>
+        <a class="{{ 'active' if sort == 'new' else '' }}" href="{{ url_for('forum.community_detail', slug=community.slug, sort='new', q=search) }}">New</a>
+        <a class="{{ 'active' if sort == 'top' else '' }}" href="{{ url_for('forum.community_detail', slug=community.slug, sort='top', q=search) }}">Top</a>
+        <a class="{{ 'active' if sort == 'comments' else '' }}" href="{{ url_for('forum.community_detail', slug=community.slug, sort='comments', q=search) }}">Comments</a>
+      </div>
+    </div>
+  </section>
+
+  <form class="search-bar" action="{{ url_for('forum.community_detail', slug=community.slug) }}" method="get">
+    <input type="hidden" name="sort" value="{{ sort }}">
+    <label for="q">Search</label>
+    <input id="q" name="q" type="search" value="{{ search }}" placeholder="Search c/{{ community.slug }}">
+    <select name="type">
+      <option value="">Any type</option>
+      {% for type in ["discussion", "question", "image", "announcement"] %}
+        <option value="{{ type }}" {% if post_type == type %}selected{% endif %}>{{ type.title() }}</option>
+      {% endfor %}
+    </select>
+    <label class="checkbox-row search-check"><input name="has_image" value="yes" type="checkbox" {% if has_image %}checked{% endif %}> Images</label>
+    <button class="button button-primary" type="submit">Search</button>
+  </form>
+
+  <div class="app-layout">
+    <section class="post-list">
+      {% for post, score, comment_count in posts %}
+        {% include "forum/_post_card.html" %}
+      {% else %}
+        <div class="empty-state">
+          <h2>No posts here yet</h2>
+          <p>Start the first thread in c/{{ community.slug }}.</p>
+          {% if current_user.is_authenticated %}
+            <a class="button button-primary" href="{{ url_for('forum.create_post') }}">Create Post</a>
+          {% endif %}
+        </div>
+      {% endfor %}
+      {% if total_pages > 1 %}
+        <nav class="pagination-bar" aria-label="Pagination">
+          {% if page > 1 %}
+            <a class="button button-ghost" href="{{ url_for('forum.community_detail', slug=community.slug, sort=sort, q=search, page=page - 1) }}">Previous</a>
+          {% endif %}
+          <span>Page {{ page }} of {{ total_pages }}</span>
+          {% if page < total_pages %}
+            <a class="button button-ghost" href="{{ url_for('forum.community_detail', slug=community.slug, sort=sort, q=search, page=page + 1) }}">Next</a>
+          {% endif %}
+        </nav>
+      {% endif %}
+    </section>
+    {% include "forum/_sidebar.html" %}
+  </div>
+{% endblock %}

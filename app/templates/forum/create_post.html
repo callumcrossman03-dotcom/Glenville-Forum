@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}New Post - Glenville State Forums{% endblock %}
+
+{% block content %}
+  <section class="composer">
+    <h1>Create post</h1>
+    <form class="form" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+      <label for="community_id">Community</label>
+      <select id="community_id" name="community_id" required>
+        <option value="">Choose a community</option>
+        {% for community in communities %}
+          <option value="{{ community.id }}">c/{{ community.slug }} - {{ community.name }}</option>
+        {% endfor %}
+      </select>
+
+      <label for="title">Title</label>
+      <input id="title" name="title" type="text" maxlength="180" required>
+
+      <label for="post_type">Post type</label>
+      <select id="post_type" name="post_type">
+        <option value="discussion">Discussion</option>
+        <option value="question">Question</option>
+        <option value="image">Image</option>
+        <option value="announcement">Announcement</option>
+      </select>
+
+      <label for="body">Post</label>
+      <textarea id="body" name="body" rows="10" maxlength="5000" required></textarea>
+      <div class="char-counter"><span data-count-for="body">0</span>/5000</div>
+
+      <label for="image">Image</label>
+      <input id="image" name="image" type="file" accept="image/png,image/jpeg,image/gif,image/webp">
+      <img class="image-preview" alt="Selected image preview" hidden>
+
+      <button class="button button-primary" type="submit">Publish</button>
+    </form>
+  </section>
+{% endblock %}

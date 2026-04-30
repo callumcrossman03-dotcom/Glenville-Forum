@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Comment - Glenville State Forums{% endblock %}
+
+{% block content %}
+  <section class="composer">
+    <h1>Edit comment</h1>
+    <form class="form" method="post">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+      <label for="body">Comment</label>
+      <textarea id="body" name="body" rows="7" required>{{ comment.body }}</textarea>
+
+      <button class="button button-primary" type="submit">Save Changes</button>
+    </form>
+  </section>
+{% endblock %}

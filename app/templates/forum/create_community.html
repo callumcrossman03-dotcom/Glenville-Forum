@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Create Community - Glenville State Forums{% endblock %}
+
+{% block content %}
+  <section class="composer">
+    <h1>Create community</h1>
+    <form class="form" method="post">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+      <label for="name">Name</label>
+      <input id="name" name="name" maxlength="40" required>
+
+      <label for="slug">Slug</label>
+      <input id="slug" name="slug" maxlength="40" placeholder="example: biology-club">
+
+      <label for="icon">Icon</label>
+      <input id="icon" name="icon" maxlength="8" value="GS">
+
+      <label for="description">Description</label>
+      <textarea id="description" name="description" rows="4" maxlength="255" required></textarea>
+
+      <button class="button button-primary" type="submit">Create Community</button>
+    </form>
+  </section>
+{% endblock %}

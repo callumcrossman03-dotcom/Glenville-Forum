@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.username }} - Glenville State Forums{% endblock %}
+
+{% block content %}
+  <section class="profile-header">
+    <div class="profile-identity">
+      <span class="avatar avatar-large" style="background: {{ user.avatar_color }}">{{ user.initials }}</span>
+      <div>
+        <h1>{{ user.username }}</h1>
+        {% if user.display_name %}<p>{{ user.display_name }}</p>{% endif %}
+        {% if user.bio %}<p>{{ user.bio }}</p>{% endif %}
+        <p>Member since {{ user.created_at.strftime("%b %d, %Y") }}</p>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div>
+        <strong>{{ post_karma + comment_karma }}</strong>
+        <span>Total karma</span>
+      </div>
+      <div>
+        <strong>{{ post_karma }}</strong>
+        <span>Post karma</span>
+      </div>
+      <div>
+        <strong>{{ comment_karma }}</strong>
+        <span>Comment karma</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="profile-columns">
+    <div>
+      <h2>Recent posts</h2>
+      <div class="mini-list">
+        {% for post in recent_posts %}
+          <article>
+            <a href="{{ url_for('forum.post_detail', post_id=post.id) }}">{{ post.title }}</a>
+            <div class="meta">c/{{ post.community.slug }} · {{ post.created_at.strftime("%b %d, %Y") }}</div>
+          </article>
+        {% else %}
+          <p class="muted">No posts yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div>
+      <h2>Recent comments</h2>
+      <div class="mini-list">
+        {% for comment in recent_comments %}
+          <article>
+            <a href="{{ url_for('forum.post_detail', post_id=comment.post_id) }}">{{ comment.post.title }}</a>
+            <p>{{ comment.body }}</p>
+            <div class="meta">{{ comment.created_at.strftime("%b %d, %Y") }}</div>
+          </article>
+        {% else %}
+          <p class="muted">No comments yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}

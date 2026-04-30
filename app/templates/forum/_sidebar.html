@@ -1,0 +1,21 @@
+<aside class="app-sidebar">
+  <section class="sidebar-panel">
+    <div class="sidebar-title">Trending Now</div>
+    <div class="trending-list">
+      {% for post, score, comment_count in trending_posts %}
+        <a class="trending-item" href="{{ url_for('forum.post_detail', post_id=post.id) }}">
+          <span>{{ post.title }}</span>
+          <small>c/{{ post.community.slug }} · {{ score }} votes · {{ comment_count }} comments</small>
+        </a>
+      {% else %}
+        <p class="muted">Trending posts will show up after students start posting.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="sidebar-panel">
+    <div class="sidebar-title">Campus Spaces</div>
+    <p class="muted">Find classmates, ask questions, share events, and keep up with Glenville State life.</p>
+    <a class="button button-primary sidebar-button" href="{{ url_for('forum.communities') }}">Browse Communities</a>
+  </section>
+</aside>

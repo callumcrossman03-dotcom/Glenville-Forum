@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: glenville-state-forums
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn "run:app"
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: SESSION_COOKIE_SECURE
+        value: "1"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: glenville-state-forums-db
+          property: connectionString
+
+databases:
+  - name: glenville-state-forums-db
+    databaseName: glenville_state_forums
+    user: glenville_state_forums

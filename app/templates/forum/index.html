@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Feed - Glenville State Forums{% endblock %}
+
+{% block content %}
+  <section class="feed-header">
+    <div>
+      <h1>Glenville State Forums</h1>
+      <p>Campus questions, class tips, events, athletics, and student conversations.</p>
+    </div>
+    <div class="segmented">
+      <a class="{{ 'active' if sort == 'hot' else '' }}" href="{{ url_for('forum.index', sort='hot', q=search, author=author, type=post_type, has_image='yes' if has_image else None, feed=feed) }}">Hot</a>
+      <a class="{{ 'active' if sort == 'new' else '' }}" href="{{ url_for('forum.index', sort='new', q=search, author=author, type=post_type, has_image='yes' if has_image else None, feed=feed) }}">New</a>
+      <a class="{{ 'active' if sort == 'top' else '' }}" href="{{ url_for('forum.index', sort='top', q=search, author=author, type=post_type, has_image='yes' if has_image else None, feed=feed) }}">Top</a>
+      <a class="{{ 'active' if sort == 'comments' else '' }}" href="{{ url_for('forum.index', sort='comments', q=search, author=author, type=post_type, has_image='yes' if has_image else None, feed=feed) }}">Comments</a>
+    </div>
+  </section>
+
+  <div class="segmented feed-toggle">
+    <a class="{{ 'active' if feed == 'all' else '' }}" href="{{ url_for('forum.index', sort=sort, q=search, feed='all') }}">All Campus</a>
+    {% if current_user.is_authenticated %}
+      <a class="{{ 'active' if feed == 'joined' else '' }}" href="{{ url_for('forum.index', sort=sort, q=search, feed='joined') }}">Joined</a>
+    {% endif %}
+  </div>
+
+  <form class="search-bar" action="{{ url_for('forum.index') }}" method="get">
+    <input type="hidden" name="sort" value="{{ sort }}">
+    <input type="hidden" name="feed" value="{{ feed }}">
+    <label for="q">Search</label>
+    <input id="q" name="q" type="search" value="{{ search }}" placeholder="Search posts, topics, or communities">
+    <input name="author" type="search" value="{{ author }}" placeholder="Author">
+    <select name="type">
+      <option value="">Any type</option>
+      {% for type in ["discussion", "question", "image", "announcement"] %}
+        <option value="{{ type }}" {% if post_type == type %}selected{% endif %}>{{ type.title() }}</option>
+      {% endfor %}
+    </select>
+    <label class="checkbox-row search-check"><input name="has_image" value="yes" type="checkbox" {% if has_image %}checked{% endif %}> Images</label>
+    <button class="button button-primary" type="submit">Search</button>
+  </form>
+
+  <section class="community-strip" aria-label="Communities">
+    {% for community in communities %}
+      <a href="{{ url_for('forum.community_detail', slug=community.slug) }}">c/{{ community.slug }}</a>
+    {% endfor %}
+  </section>
+
+  <div class="app-layout">
+    <section class="post-list">
+      {% for post, score, comment_count in posts %}
+        {% include "forum/_post_card.html" %}
+      {% else %}
+        <div class="empty-state">
+          <h2>No posts yet</h2>
+          <p>Be the first person to start a thread.</p>
+          {% if current_user.is_authenticated %}
+            <a class="button button-primary" href="{{ url_for('forum.create_post') }}">Create Post</a>
+          {% endif %}
+        </div>
+      {% endfor %}
+      {% if total_pages > 1 %}
+        <nav class="pagination-bar" aria-label="Pagination">
+          {% if page > 1 %}
+            <a class="button button-ghost" href="{{ url_for('forum.index', sort=sort, q=search, author=author, type=post_type, has_image='yes' if has_image else None, feed=feed, page=page - 1) }}">Previous</a>
+          {% endif %}
+          <span>Page {{ page }} of {{ total_pages }}</span>
+          {% if page < total_pages %}
+            <a class="button button-ghost" href="{{ url_for('forum.index', sort=sort, q=search, author=author, type=post_type, has_image='yes' if has_image else None, feed=feed, page=page + 1) }}">Next</a>
+          {% endif %}
+        </nav>
+      {% endif %}
+    </section>
+    {% include "forum/_sidebar.html" %}
+  </div>
+{% endblock %}

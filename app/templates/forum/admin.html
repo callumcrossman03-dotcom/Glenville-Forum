@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - Glenville State Forums{% endblock %}
+
+{% block content %}
+  <section class="feed-header">
+    <div>
+      <h1>Admin Dashboard</h1>
+      <p>Moderate posts, comments, and user access.</p>
+    </div>
+  </section>
+
+  <section class="moderation-panel">
+    <h2>Moderation Queue</h2>
+    {% for report in reports %}
+      <article class="report-row">
+        <div>
+          <strong>{{ report.reason }}</strong>
+          <div class="meta">
+            Reported by {{ report.reporter.username if report.reporter else "unknown" }} ·
+            {{ report.created_at.strftime("%b %d, %Y at %I:%M %p") }}
+          </div>
+          {% if report.post %}
+            <a href="{{ url_for('forum.post_detail', post_id=report.post.id) }}">Post: {{ report.post.title }}</a>
+          {% elif report.comment %}
+            <a href="{{ url_for('forum.post_detail', post_id=report.comment.post_id) }}">Comment: {{ report.comment.body[:90] }}</a>
+          {% endif %}
+        </div>
+        <div class="admin-actions">
+          <form action="{{ url_for('forum.moderate_report', report_id=report.id, action='dismiss') }}" method="post">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            <button class="button button-ghost" type="submit">Dismiss</button>
+          </form>
+          <form action="{{ url_for('forum.moderate_report', report_id=report.id, action='remove') }}" method="post">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            <button class="button button-danger" type="submit">Remove Content</button>
+          </form>
+        </div>
+      </article>
+    {% else %}
+      <p class="muted">No open reports.</p>
+    {% endfor %}
+  </section>
+
+  <section class="admin-grid">
+    <div class="admin-panel">
+      <h2>Users</h2>
+      {% for user in users %}
+        <article class="admin-row">
+          <span>{{ user.username }} {% if user.is_admin %}<strong>Admin</strong>{% endif %}</span>
+          <form action="{{ url_for('forum.toggle_admin', user_id=user.id) }}" method="post">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            <button class="button button-ghost" type="submit">{{ 'Remove Admin' if user.is_admin else 'Make Admin' }}</button>
+          </form>
+        </article>
+      {% endfor %}
+    </div>
+
+    <div class="admin-panel">
+      <h2>Recent Posts</h2>
+      {% for post in posts %}
+        <article class="admin-row">
+          <a href="{{ url_for('forum.post_detail', post_id=post.id) }}">{{ post.title }}</a>
+          <div class="admin-actions">
+            <form action="{{ url_for('forum.toggle_pin_post', post_id=post.id) }}" method="post">
+              <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+              <button class="button button-ghost" type="submit">{{ 'Unpin' if post.is_pinned else 'Pin' }}</button>
+            </form>
+            <form action="{{ url_for('forum.toggle_lock_post', post_id=post.id) }}" method="post">
+              <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+              <button class="button button-ghost" type="submit">{{ 'Unlock' if post.is_locked else 'Lock' }}</button>
+            </form>
+            <form action="{{ url_for('forum.delete_post', post_id=post.id) }}" method="post">
+              <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+              <button class="button button-danger" type="submit">Delete</button>
+            </form>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+
+    <div class="admin-panel">
+      <h2>Recent Comments</h2>
+      {% for comment in comments %}
+        <article class="admin-row">
+          <span>{{ comment.body[:80] }}</span>
+          <form action="{{ url_for('forum.delete_comment', comment_id=comment.id) }}" method="post">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            <button class="button button-danger" type="submit">Delete</button>
+          </form>
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}

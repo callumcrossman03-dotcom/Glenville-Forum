@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Saved Posts - Glenville State Forums{% endblock %}
+
+{% block content %}
+  <section class="feed-header">
+    <div>
+      <h1>Saved Posts</h1>
+      <p>Your bookmarked Glenville State threads.</p>
+    </div>
+  </section>
+
+  <div class="app-layout">
+    <section class="post-list">
+      {% for post, score, comment_count in posts %}
+        {% include "forum/_post_card.html" %}
+      {% else %}
+        <div class="empty-state">
+          <h2>No saved posts yet</h2>
+          <p>Save useful threads and they will show up here.</p>
+        </div>
+      {% endfor %}
+    </section>
+    {% include "forum/_sidebar.html" %}
+  </div>
+{% endblock %}

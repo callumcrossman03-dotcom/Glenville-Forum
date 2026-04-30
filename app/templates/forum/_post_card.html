@@ -1,0 +1,59 @@
+<article class="post-card">
+  <form action="{{ url_for('forum.vote_post', post_id=post.id) }}" method="post" class="vote-box">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+    <button class="{{ 'vote-active-up' if post_votes.get(post.id) == 1 else '' }}" name="value" value="1" title="Upvote post" type="submit">▲</button>
+    <span>{{ score }}</span>
+    <button class="{{ 'vote-active-down' if post_votes.get(post.id) == -1 else '' }}" name="value" value="-1" title="Downvote post" type="submit">▼</button>
+  </form>
+  <div class="post-content">
+    <div class="post-card-topline">
+      <a class="community-badge" href="{{ url_for('forum.community_detail', slug=post.community.slug) }}">
+        <span>{{ post.community.icon }}</span>
+        c/{{ post.community.slug }}
+      </a>
+      <a class="author-chip" href="{{ url_for('forum.profile', username=post.author.username) }}">
+        <span class="avatar avatar-small" style="background: {{ post.author.avatar_color }}">{{ post.author.initials }}</span>
+        {{ post.author.public_name }}
+      </a>
+    </div>
+
+    {% if post.is_pinned or post.is_locked %}
+      <div class="status-row">
+        {% if post.is_pinned %}<span class="status-pill">Pinned</span>{% endif %}
+        {% if post.is_locked %}<span class="status-pill locked">Locked</span>{% endif %}
+      </div>
+    {% endif %}
+
+    <a class="post-title" href="{{ url_for('forum.post_detail', post_id=post.id) }}">{{ post.title }}</a>
+    <span class="type-pill">{{ post.post_type }}</span>
+
+    {% if post.image_filename %}
+      <a href="{{ url_for('forum.post_detail', post_id=post.id) }}">
+        <img class="post-image-thumb" src="{{ url_for('static', filename='uploads/' ~ post.image_filename) }}" alt="Image for {{ post.title }}">
+      </a>
+    {% endif %}
+
+    <p>{{ post.body }}</p>
+
+    <div class="post-actions-row">
+      <span>{{ comment_count }} comments</span>
+      <span>{{ post.created_at.strftime("%b %d, %Y") }}</span>
+      {% if current_user.is_authenticated %}
+        <form action="{{ url_for('forum.save_post', post_id=post.id) }}" method="post">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+          <button class="save-button {{ 'saved' if post.id in saved_posts else '' }}" type="submit">
+            {{ 'Saved' if post.id in saved_posts else 'Save' }}
+          </button>
+        </form>
+        <details class="inline-report">
+          <summary>Report</summary>
+          <form action="{{ url_for('forum.report_post', post_id=post.id) }}" method="post">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            <input name="reason" maxlength="255" placeholder="Reason" required>
+            <button class="button button-ghost" type="submit">Send</button>
+          </form>
+        </details>
+      {% endif %}
+    </div>
+  </div>
+</article>

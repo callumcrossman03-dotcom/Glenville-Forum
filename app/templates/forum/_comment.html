@@ -1,0 +1,51 @@
+<article class="comment comment-depth-{{ depth }}">
+  <form action="{{ url_for('forum.vote_comment', comment_id=comment.id) }}" method="post" class="vote-box vote-box-small">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+    <button class="{{ 'vote-active-up' if comment_votes.get(comment.id) == 1 else '' }}" name="value" value="1" title="Upvote comment" type="submit">▲</button>
+    <span>{{ comment.score }}</span>
+    <button class="{{ 'vote-active-down' if comment_votes.get(comment.id) == -1 else '' }}" name="value" value="-1" title="Downvote comment" type="submit">▼</button>
+  </form>
+  <div>
+    <div class="meta">
+      <a href="{{ url_for('forum.profile', username=comment.author.username) }}">{{ comment.author.username }}</a> ·
+      {{ comment.created_at.strftime("%b %d, %Y at %I:%M %p") }}
+    </div>
+    {% if current_user.is_authenticated and (comment.author == current_user or current_user.is_admin) %}
+      <div class="owner-actions owner-actions-small">
+        <a class="button button-ghost" href="{{ url_for('forum.edit_comment', comment_id=comment.id) }}">Edit</a>
+        <form action="{{ url_for('forum.delete_comment', comment_id=comment.id) }}" method="post">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+          <button class="button button-danger" type="submit">Delete</button>
+        </form>
+      </div>
+    {% endif %}
+    <p>{{ comment.body }}</p>
+    {% if current_user.is_authenticated %}
+      <details class="inline-report">
+        <summary>Report</summary>
+        <form action="{{ url_for('forum.report_comment', comment_id=comment.id) }}" method="post">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+          <input name="reason" maxlength="255" placeholder="Reason" required>
+          <button class="button button-ghost" type="submit">Send</button>
+        </form>
+      </details>
+    {% endif %}
+    {% if current_user.is_authenticated and (not comment.post.is_locked or current_user.is_admin) %}
+      <details class="reply-box">
+        <summary>Reply</summary>
+        <form class="form reply-form" method="post">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="parent_id" value="{{ comment.id }}">
+          <label for="reply-{{ comment.id }}">Reply</label>
+          <textarea id="reply-{{ comment.id }}" name="body" rows="3" required></textarea>
+          <button class="button button-primary" type="submit">Reply</button>
+        </form>
+      </details>
+    {% endif %}
+  </div>
+</article>
+{% for reply in comment.replies %}
+  {% with comment=reply, depth=depth + 1 %}
+    {% include "forum/_comment.html" %}
+  {% endwith %}
+{% endfor %}

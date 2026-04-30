@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} - Glenville State Forums{% endblock %}
+
+{% block content %}
+  <div class="app-layout">
+    <div>
+      <article class="post-detail">
+        <form action="{{ url_for('forum.vote_post', post_id=post.id) }}" method="post" class="vote-box">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+          <button class="{{ 'vote-active-up' if post_votes.get(post.id) == 1 else '' }}" name="value" value="1" title="Upvote post" type="submit">▲</button>
+          <span>{{ post.score }}</span>
+          <button class="{{ 'vote-active-down' if post_votes.get(post.id) == -1 else '' }}" name="value" value="-1" title="Downvote post" type="submit">▼</button>
+        </form>
+        <div class="post-content">
+          {% if post.is_pinned or post.is_locked %}
+            <div class="status-row">
+              {% if post.is_pinned %}<span class="status-pill">Pinned</span>{% endif %}
+              {% if post.is_locked %}<span class="status-pill locked">Locked</span>{% endif %}
+            </div>
+          {% endif %}
+          <h1>{{ post.title }}</h1>
+          <div class="meta">
+            <a href="{{ url_for('forum.community_detail', slug=post.community.slug) }}">c/{{ post.community.slug }}</a> ·
+            Posted by <a href="{{ url_for('forum.profile', username=post.author.username) }}">{{ post.author.username }}</a> ·
+            {{ post.created_at.strftime("%b %d, %Y at %I:%M %p") }}
+          </div>
+          {% if current_user.is_authenticated %}
+            <div class="detail-actions">
+              <form action="{{ url_for('forum.save_post', post_id=post.id) }}" method="post" class="detail-save-form">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                <button class="save-button {{ 'saved' if post.id in saved_posts else '' }}" type="submit">
+                  {{ 'Saved' if post.id in saved_posts else 'Save Post' }}
+                </button>
+              </form>
+              <details class="inline-report">
+                <summary>Report</summary>
+                <form action="{{ url_for('forum.report_post', post_id=post.id) }}" method="post">
+                  <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                  <input name="reason" maxlength="255" placeholder="Reason" required>
+                  <button class="button button-ghost" type="submit">Send</button>
+                </form>
+              </details>
+            </div>
+          {% endif %}
+          {% if current_user.is_authenticated and (post.author == current_user or current_user.is_admin) %}
+            <div class="owner-actions">
+              <a class="button button-ghost" href="{{ url_for('forum.edit_post', post_id=post.id) }}">Edit</a>
+              <form action="{{ url_for('forum.delete_post', post_id=post.id) }}" method="post">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                <button class="button button-danger" type="submit">Delete</button>
+              </form>
+            </div>
+          {% endif %}
+          {% if post.image_filename %}
+            <img class="post-image-full" src="{{ url_for('static', filename='uploads/' ~ post.image_filename) }}" alt="Image for {{ post.title }}">
+          {% endif %}
+          <p>{{ post.body }}</p>
+        </div>
+      </article>
+
+      <section class="comment-composer">
+        <h2>Join the discussion</h2>
+        {% if post.is_locked and not current_user.is_admin %}
+          <p class="muted">This thread is locked. New comments are closed.</p>
+        {% elif current_user.is_authenticated %}
+          <form class="form" method="post">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            <label for="body">Comment</label>
+            <textarea id="body" name="body" rows="5" required></textarea>
+            <button class="button button-primary" type="submit">Comment</button>
+          </form>
+        {% else %}
+          <p class="muted"><a href="{{ url_for('auth.login', next=request.path) }}">Sign in</a> to add a comment.</p>
+        {% endif %}
+      </section>
+
+      <section class="comments">
+        <h2>{{ comments|length }} comments</h2>
+        {% for comment in top_comments %}
+          {% with depth=0 %}
+            {% include "forum/_comment.html" %}
+          {% endwith %}
+        {% else %}
+          <p class="muted">No comments yet.</p>
+        {% endfor %}
+      </section>
+    </div>
+    {% include "forum/_sidebar.html" %}
+  </div>
+{% endblock %}

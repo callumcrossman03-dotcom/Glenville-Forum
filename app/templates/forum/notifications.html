@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications - Glenville State Forums{% endblock %}
+
+{% block content %}
+  <section class="feed-header">
+    <div>
+      <h1>Notifications</h1>
+      <p>Replies and activity connected to your posts.</p>
+    </div>
+    <form action="{{ url_for('forum.mark_notifications_read') }}" method="post">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+      <button class="button button-primary" type="submit">Mark Read</button>
+    </form>
+  </section>
+
+  <section class="notification-list">
+    {% for notification in notifications %}
+      <article class="notification-item {{ 'unread' if not notification.read_at else '' }}">
+        <div>
+          <strong>{{ notification.message }}</strong>
+          <div class="meta">{{ notification.created_at.strftime("%b %d, %Y at %I:%M %p") }}</div>
+        </div>
+        {% if notification.post %}
+          <a class="button button-ghost" href="{{ url_for('forum.post_detail', post_id=notification.post.id) }}">Open</a>
+        {% endif %}
+      </article>
+    {% else %}
+      <div class="empty-state">
+        <h2>No notifications yet</h2>
+        <p>When people comment or reply, you will see it here.</p>
+      </div>
+    {% endfor %}
+  </section>
+{% endblock %}

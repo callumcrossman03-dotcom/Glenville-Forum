@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Messages - Glenville State Forums{% endblock %}
+
+{% block content %}
+  <section class="feed-header">
+    <div>
+      <h1>Direct Messages</h1>
+      <p>Send private messages to other Glenville State Forums users.</p>
+    </div>
+  </section>
+
+  <div class="messages-layout">
+    <aside class="message-sidebar">
+      <h2>Conversations</h2>
+      {% for user in conversations %}
+        <a class="conversation-link {{ 'active' if selected_user and selected_user.id == user.id else '' }}" href="{{ url_for('forum.messages', with_user=user.username) }}">
+          <span class="avatar avatar-small" style="background: {{ user.avatar_color }}">{{ user.initials }}</span>
+          {{ user.username }}
+        </a>
+      {% else %}
+        <p class="muted">No conversations yet.</p>
+      {% endfor %}
+    </aside>
+
+    <section class="message-panel">
+      {% if selected_user %}
+        <h2>Conversation with {{ selected_user.username }}</h2>
+        <div class="message-thread">
+          {% for message in thread %}
+            <article class="message-bubble {{ 'mine' if message.sender_id == current_user.id else '' }}">
+              <p>{{ message.body }}</p>
+              <span>{{ message.created_at.strftime("%b %d, %I:%M %p") }}</span>
+            </article>
+          {% else %}
+            <p class="muted">No messages yet.</p>
+          {% endfor %}
+        </div>
+      {% else %}
+        <h2>Start a message</h2>
+      {% endif %}
+
+      <form class="form" method="post">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+        <label for="username">Username</label>
+        <input id="username" name="username" value="{{ selected_user.username if selected_user else '' }}" required>
+        <label for="body">Message</label>
+        <textarea id="body" name="body" rows="4" required></textarea>
+        <button class="button button-primary" type="submit">Send Message</button>
+      </form>
+    </section>
+  </div>
+{% endblock %}

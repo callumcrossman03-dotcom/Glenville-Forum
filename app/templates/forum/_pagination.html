@@ -1,0 +1,11 @@
+{% if total_pages > 1 %}
+  <nav class="pagination-bar" aria-label="Pagination">
+    {% if page > 1 %}
+      <a class="button button-ghost" href="{{ page_url(page - 1) }}">Previous</a>
+    {% endif %}
+    <span>Page {{ page }} of {{ total_pages }}</span>
+    {% if page < total_pages %}
+      <a class="button button-ghost" href="{{ page_url(page + 1) }}">Next</a>
+    {% endif %}
+  </nav>
+{% endif %}

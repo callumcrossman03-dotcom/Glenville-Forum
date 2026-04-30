@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Events - Glenville State Forums{% endblock %}
+
+{% block content %}
+  <section class="feed-header">
+    <div>
+      <h1>Events Calendar</h1>
+      <p>Campus events, club meetings, deadlines, and things happening around Glenville.</p>
+    </div>
+  </section>
+
+  <div class="app-layout">
+    <section class="event-list">
+      {% for event in events %}
+        <article class="event-card">
+          <div class="event-date">
+            <strong>{{ event.starts_at.strftime("%b %d") }}</strong>
+            <span>{{ event.starts_at.strftime("%I:%M %p") }}</span>
+          </div>
+          <div>
+            <h2>{{ event.title }}</h2>
+            <p>{{ event.description }}</p>
+            <div class="meta">{{ event.location }}{% if event.community %} · c/{{ event.community.slug }}{% endif %} · by {{ event.author.username }}</div>
+          </div>
+        </article>
+      {% else %}
+        <div class="empty-state">
+          <h2>No events yet</h2>
+          <p>Add the first campus event.</p>
+        </div>
+      {% endfor %}
+    </section>
+
+    <aside class="app-sidebar">
+      <section class="sidebar-panel">
+        <div class="sidebar-title">Add Event</div>
+        <form class="form" method="post">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+          <label for="title">Title</label>
+          <input id="title" name="title" required>
+          <label for="starts_at">Date and time</label>
+          <input id="starts_at" name="starts_at" type="datetime-local" required>
+          <label for="location">Location</label>
+          <input id="location" name="location" required>
+          <label for="community_id">Community</label>
+          <select id="community_id" name="community_id">
+            <option value="">No community</option>
+            {% for community in communities %}
+              <option value="{{ community.id }}">c/{{ community.slug }}</option>
+            {% endfor %}
+          </select>
+          <label for="description">Description</label>
+          <textarea id="description" name="description" rows="4" required></textarea>
+          <button class="button button-primary" type="submit">Add Event</button>
+        </form>
+      </section>
+    </aside>
+  </div>
+{% endblock %}
