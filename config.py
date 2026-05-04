@@ -21,7 +21,9 @@ class Config:
         )
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    MAX_CONTENT_LENGTH = 8 * 1024 * 1024
+    MAX_CONTENT_LENGTH = int(os.environ.get("MAX_CONTENT_LENGTH", 8 * 1024 * 1024))
+    MAX_FORM_MEMORY_SIZE = int(os.environ.get("MAX_FORM_MEMORY_SIZE", 2 * 1024 * 1024))
+    SESSION_COOKIE_NAME = "glenville_forum_session"
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
     SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", "0") == "1"
@@ -29,6 +31,7 @@ class Config:
     REMEMBER_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", "0") == "1"
     PREFERRED_URL_SCHEME = "https" if SESSION_COOKIE_SECURE else "http"
     WTF_CSRF_TIME_LIMIT = 3600
+    RATELIMIT_STORAGE_URI = os.environ.get("RATELIMIT_STORAGE_URI", "memory://")
     ADMIN_EMAILS = [
         email.strip().lower()
         for email in os.environ.get("ADMIN_EMAILS", "").split(",")

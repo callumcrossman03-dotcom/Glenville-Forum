@@ -1,9 +1,9 @@
 <article class="comment comment-depth-{{ depth }}">
-  <form action="{{ url_for('forum.vote_comment', comment_id=comment.id) }}" method="post" class="vote-box vote-box-small">
+  <form action="{{ url_for('forum.vote_comment', comment_id=comment.id) }}" method="post" class="vote-box vote-box-small" data-async-action="vote">
     <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-    <button class="{{ 'vote-active-up' if comment_votes.get(comment.id) == 1 else '' }}" name="value" value="1" title="Upvote comment" type="submit">▲</button>
-    <span>{{ comment.score }}</span>
-    <button class="{{ 'vote-active-down' if comment_votes.get(comment.id) == -1 else '' }}" name="value" value="-1" title="Downvote comment" type="submit">▼</button>
+    <button class="{{ 'vote-active-up' if comment_votes.get(comment.id) == 1 else '' }}" name="value" value="1" title="Upvote comment" aria-label="Upvote comment" type="submit">▲</button>
+    <span data-score>{{ comment.score }}</span>
+    <button class="{{ 'vote-active-down' if comment_votes.get(comment.id) == -1 else '' }}" name="value" value="-1" title="Downvote comment" aria-label="Downvote comment" type="submit">▼</button>
   </form>
   <div>
     <div class="meta">
@@ -44,8 +44,13 @@
     {% endif %}
   </div>
 </article>
-{% for reply in comment.replies %}
-  {% with comment=reply, depth=depth + 1 %}
-    {% include "forum/_comment.html" %}
-  {% endwith %}
-{% endfor %}
+{% if comment.replies %}
+  <details class="reply-thread" open>
+    <summary>{{ comment.replies|length }} {{ 'reply' if comment.replies|length == 1 else 'replies' }}</summary>
+    {% for reply in comment.replies %}
+      {% with comment=reply, depth=depth + 1 %}
+        {% include "forum/_comment.html" %}
+      {% endwith %}
+    {% endfor %}
+  </details>
+{% endif %}

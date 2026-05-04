@@ -19,7 +19,7 @@
           {{ user.username }}
         </a>
       {% else %}
-        <p class="muted">No conversations yet.</p>
+        <div class="empty-mini">No conversations yet. Start one by entering a username.</div>
       {% endfor %}
     </aside>
 
@@ -37,7 +37,11 @@
           {% endfor %}
         </div>
       {% else %}
-        <h2>Start a message</h2>
+        <div class="empty-state empty-state-action message-empty">
+          <div class="empty-icon">✉</div>
+          <h2>Start a message</h2>
+          <p>Send a private note to a classmate, club member, or moderator by entering their username below.</p>
+        </div>
       {% endif %}
 
       <form class="form" method="post">

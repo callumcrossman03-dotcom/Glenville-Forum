@@ -1,0 +1,26 @@
+{% if post.post_type == "poll" and post.poll_options %}
+  {% set poll = poll_state(post) %}
+  <form class="poll-card" action="{{ url_for('forum.vote_poll', post_id=post.id) }}" method="post" data-async-action="poll">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+    <div class="poll-privacy-note">Anonymous poll · nobody can see who picked what</div>
+    {% for option in post.poll_options %}
+      {% set percent = ((option.vote_count / poll.total) * 100)|round|int if poll.total else 0 %}
+      <label class="poll-option {{ 'selected' if poll.user_option_id == option.id else '' }}" data-poll-option="{{ option.id }}">
+        <input type="radio" name="option_id" value="{{ option.id }}" {% if poll.user_option_id == option.id %}checked{% endif %} {% if not current_user.is_authenticated %}disabled{% endif %}>
+        <span class="poll-option-main">
+          <span class="poll-option-text">{{ option.text }}</span>
+          <span class="poll-bar" aria-hidden="true"><span style="width: {{ percent }}%"></span></span>
+        </span>
+        <span class="poll-percent" data-poll-percent>{{ percent }}%</span>
+      </label>
+    {% endfor %}
+    <div class="poll-footer">
+      <span data-poll-total>{{ poll.total }} anonymous {{ 'response' if poll.total == 1 else 'responses' }}</span>
+      {% if current_user.is_authenticated %}
+        <button class="button button-ghost poll-submit" type="submit">Submit Anonymously</button>
+      {% else %}
+        <a href="{{ url_for('auth.login', next=request.path) }}">Sign in to vote</a>
+      {% endif %}
+    </div>
+  </form>
+{% endif %}

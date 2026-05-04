@@ -9,11 +9,66 @@
       <p>Moderate posts, comments, and user access.</p>
     </div>
   </section>
+  <section class="admin-stats-grid">
+    {% for label, value in [("Users", stats.users), ("Posts", stats.posts), ("Comments", stats.comments), ("Votes", stats.votes), ("Polls", stats.polls), ("Events", stats.events), ("Open Reports", stats.reports)] %}
+      <article class="admin-stat-card">
+        <span>{{ label }}</span>
+        <strong>{{ value }}</strong>
+      </article>
+    {% endfor %}
+  </section>
+
+  <section class="admin-chart-panel">
+    <div>
+      <h2>Top Communities</h2>
+      <p class="muted">Where students are posting most.</p>
+    </div>
+    <div class="bar-chart">
+      {% set max_posts = top_communities[0][1] if top_communities else 1 %}
+      {% for community, post_count in top_communities %}
+        <div class="bar-row">
+          <span>c/{{ community.slug }}</span>
+          <div><i style="width: {{ (post_count / max_posts * 100)|round|int if max_posts else 0 }}%"></i></div>
+          <strong>{{ post_count }}</strong>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="moderation-panel role-panel">
+    <h2>Community Moderator Roles</h2>
+    <form class="form role-form" action="{{ url_for('forum.manage_community_moderator') }}" method="post">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+      <input name="username" placeholder="Username" required>
+      <select name="community_id" required>
+        <option value="">Community</option>
+        {% for community in communities %}
+          <option value="{{ community.id }}">c/{{ community.slug }}</option>
+        {% endfor %}
+      </select>
+      <select name="role">
+        <option value="moderator">Moderator</option>
+        <option value="owner">Owner</option>
+      </select>
+      <button class="button button-primary" name="action" value="add" type="submit">Assign</button>
+      <button class="button button-ghost" name="action" value="remove" type="submit">Remove</button>
+    </form>
+    <div class="role-list">
+      {% for row in moderator_rows %}
+        <article>
+          <strong>{{ row.user.username }}</strong>
+          <span>{{ row.role }} of c/{{ row.community.slug }}</span>
+        </article>
+      {% else %}
+        <p class="muted">No community moderators assigned yet.</p>
+      {% endfor %}
+    </div>
+  </section>
 
   <section class="moderation-panel">
     <h2>Moderation Queue</h2>
     {% for report in reports %}
-      <article class="report-row">
+      <article class="report-row{% if report.post or report.comment %} clickable-card{% endif %}"{% if report.post %} data-href="{{ url_for('forum.post_detail', post_id=report.post.id) }}" tabindex="0"{% elif report.comment %} data-href="{{ url_for('forum.post_detail', post_id=report.comment.post_id) }}" tabindex="0"{% endif %}>
         <div>
           <strong>{{ report.reason }}</strong>
           <div class="meta">
@@ -59,7 +114,7 @@
     <div class="admin-panel">
       <h2>Recent Posts</h2>
       {% for post in posts %}
-        <article class="admin-row">
+        <article class="admin-row clickable-card" data-href="{{ url_for('forum.post_detail', post_id=post.id) }}" tabindex="0">
           <a href="{{ url_for('forum.post_detail', post_id=post.id) }}">{{ post.title }}</a>
           <div class="admin-actions">
             <form action="{{ url_for('forum.toggle_pin_post', post_id=post.id) }}" method="post">

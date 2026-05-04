@@ -4,8 +4,11 @@
     <div class="trending-list">
       {% for post, score, comment_count in trending_posts %}
         <a class="trending-item" href="{{ url_for('forum.post_detail', post_id=post.id) }}">
-          <span>{{ post.title }}</span>
-          <small>c/{{ post.community.slug }} · {{ score }} votes · {{ comment_count }} comments</small>
+          <span class="trend-rank">{{ loop.index }}</span>
+          <span class="trend-copy">
+            <strong>{{ post.title }}</strong>
+            <small>c/{{ post.community.slug }} · {{ score }} votes · {{ comment_count }} comments</small>
+          </span>
         </a>
       {% else %}
         <p class="muted">Trending posts will show up after students start posting.</p>
@@ -13,9 +16,51 @@
     </div>
   </section>
 
+  <section class="sidebar-panel live-activity-panel">
+    <div class="sidebar-title">Live Campus Activity</div>
+    <div class="activity-feed">
+      {% for post, score, comment_count in trending_posts[:4] %}
+        <a href="{{ url_for('forum.post_detail', post_id=post.id) }}">
+          <span class="activity-dot"></span>
+          <span>New activity in <strong>c/{{ post.community.slug }}</strong><small>{{ comment_count }} comments · {{ score }} votes</small></span>
+        </a>
+      {% else %}
+        <p class="muted">Live activity appears as students post, vote, and comment.</p>
+      {% endfor %}
+    </div>
+  </section>
+
   <section class="sidebar-panel">
-    <div class="sidebar-title">Campus Spaces</div>
-    <p class="muted">Find classmates, ask questions, share events, and keep up with Glenville State life.</p>
-    <a class="button button-primary sidebar-button" href="{{ url_for('forum.communities') }}">Browse Communities</a>
+    <div class="sidebar-title">Suggested Communities</div>
+    <div class="sidebar-community-list">
+      {% for community, post_count in suggested_communities|default([]) %}
+        <a class="sidebar-community" href="{{ url_for('forum.community_detail', slug=community.slug) }}">
+          <span class="community-icon-mini community-color-{{ loop.index0 % 6 }}">{{ community.icon }}</span>
+          <span>
+            <strong>c/{{ community.slug }}</strong>
+            <small>{{ post_count }} posts</small>
+          </span>
+        </a>
+      {% else %}
+        <p class="muted">Communities will appear here as the forum grows.</p>
+      {% endfor %}
+    </div>
+    <a class="button button-ghost sidebar-button" href="{{ url_for('forum.communities') }}">Browse Communities</a>
+  </section>
+
+  <section class="sidebar-panel">
+    <div class="sidebar-title">Upcoming Events</div>
+    <div class="sidebar-event-list">
+      {% for event in upcoming_events|default([]) %}
+        <article class="sidebar-event">
+          <strong>{{ event.starts_at.strftime("%b %d") }}</strong>
+          <span>{{ event.title }}</span>
+          <small>{{ event.location }}</small>
+        </article>
+      {% else %}
+        <p class="muted">No upcoming events yet.</p>
+      {% endfor %}
+    </div>
+    <a class="button button-primary sidebar-button" href="{{ url_for('forum.events') }}">View Events</a>
   </section>
 </aside>

@@ -3,12 +3,18 @@
 {% block title %}Feed - Glenville State Forums{% endblock %}
 
 {% block content %}
-  <section class="feed-header">
-    <div>
+  <section class="feed-header campus-hero">
+    <div class="campus-hero-copy">
+      <span class="hero-kicker">Campus pulse</span>
       <h1>Glenville State Forums</h1>
       <p>Campus questions, class tips, events, athletics, and student conversations.</p>
+      <div class="pulse-row" aria-label="Campus forum stats">
+        <span><strong>{{ total_posts }}</strong> posts</span>
+        <span><strong>{{ communities|length }}</strong> communities</span>
+        <span><strong>{{ trending_posts|length }}</strong> trending</span>
+      </div>
     </div>
-    <div class="segmented">
+    <div class="segmented hero-sort">
       <a class="{{ 'active' if sort == 'hot' else '' }}" href="{{ url_for('forum.index', sort='hot', q=search, author=author, type=post_type, has_image='yes' if has_image else None, feed=feed) }}">Hot</a>
       <a class="{{ 'active' if sort == 'new' else '' }}" href="{{ url_for('forum.index', sort='new', q=search, author=author, type=post_type, has_image='yes' if has_image else None, feed=feed) }}">New</a>
       <a class="{{ 'active' if sort == 'top' else '' }}" href="{{ url_for('forum.index', sort='top', q=search, author=author, type=post_type, has_image='yes' if has_image else None, feed=feed) }}">Top</a>
@@ -23,34 +29,36 @@
     {% endif %}
   </div>
 
-  <form class="search-bar" action="{{ url_for('forum.index') }}" method="get">
-    <input type="hidden" name="sort" value="{{ sort }}">
-    <input type="hidden" name="feed" value="{{ feed }}">
-    <label for="q">Search</label>
-    <input id="q" name="q" type="search" value="{{ search }}" placeholder="Search posts, topics, or communities">
-    <input name="author" type="search" value="{{ author }}" placeholder="Author">
-    <select name="type">
-      <option value="">Any type</option>
-      {% for type in ["discussion", "question", "image", "announcement"] %}
-        <option value="{{ type }}" {% if post_type == type %}selected{% endif %}>{{ type.title() }}</option>
-      {% endfor %}
-    </select>
-    <label class="checkbox-row search-check"><input name="has_image" value="yes" type="checkbox" {% if has_image %}checked{% endif %}> Images</label>
-    <button class="button button-primary" type="submit">Search</button>
-  </form>
+  <details class="filter-panel" {% if search or author or post_type or has_image %}open{% endif %}>
+    <summary>
+      <span>Search & filters</span>
+      {% if search or author or post_type or has_image %}<small>Active</small>{% endif %}
+    </summary>
+    <form class="search-bar" action="{{ url_for('forum.index') }}" method="get">
+      <input type="hidden" name="sort" value="{{ sort }}">
+      <input type="hidden" name="feed" value="{{ feed }}">
+      <label for="q">Search</label>
+      <input id="q" name="q" type="search" value="{{ search }}" placeholder="Search posts, topics, or communities">
+      <input name="author" type="search" value="{{ author }}" placeholder="Author">
+      <select name="type">
+        <option value="">Any type</option>
+        {% for type in ["discussion", "question", "poll", "image", "announcement"] %}
+          <option value="{{ type }}" {% if post_type == type %}selected{% endif %}>{{ type.title() }}</option>
+        {% endfor %}
+      </select>
+      <label class="checkbox-row search-check"><input name="has_image" value="yes" type="checkbox" {% if has_image %}checked{% endif %}> Images</label>
+      <button class="button button-primary" type="submit">Search</button>
+    </form>
+  </details>
 
-  <section class="community-strip" aria-label="Communities">
-    {% for community in communities %}
-      <a href="{{ url_for('forum.community_detail', slug=community.slug) }}">c/{{ community.slug }}</a>
-    {% endfor %}
-  </section>
 
   <div class="app-layout">
     <section class="post-list">
       {% for post, score, comment_count in posts %}
         {% include "forum/_post_card.html" %}
       {% else %}
-        <div class="empty-state">
+        <div class="empty-state empty-state-action">
+          <div class="empty-icon">+</div>
           <h2>No posts yet</h2>
           <p>Be the first person to start a thread.</p>
           {% if current_user.is_authenticated %}

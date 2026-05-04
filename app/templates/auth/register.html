@@ -3,7 +3,13 @@
 {% block title %}Register - Glenville State Forums{% endblock %}
 
 {% block content %}
-  <section class="auth-panel">
+  <section class="auth-shell">
+    <aside class="auth-brand-panel">
+      <img src="{{ url_for('static', filename='images/gsu-header.png') }}" alt="Glenville State University">
+      <h1>Join the campus conversation</h1>
+      <p>Create an account, choose your communities, and start posting with classmates.</p>
+    </aside>
+    <div class="auth-panel">
     <h1>Create account</h1>
     <form class="form" method="post">
       <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
@@ -19,5 +25,6 @@
       <button class="button button-primary" type="submit">Register</button>
     </form>
     <p class="muted">Already registered? <a href="{{ url_for('auth.login') }}">Sign in</a>.</p>
+  </div>
   </section>
 {% endblock %}

@@ -6,11 +6,11 @@
   <div class="app-layout">
     <div>
       <article class="post-detail">
-        <form action="{{ url_for('forum.vote_post', post_id=post.id) }}" method="post" class="vote-box">
+        <form action="{{ url_for('forum.vote_post', post_id=post.id) }}" method="post" class="vote-box" data-async-action="vote">
           <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-          <button class="{{ 'vote-active-up' if post_votes.get(post.id) == 1 else '' }}" name="value" value="1" title="Upvote post" type="submit">▲</button>
-          <span>{{ post.score }}</span>
-          <button class="{{ 'vote-active-down' if post_votes.get(post.id) == -1 else '' }}" name="value" value="-1" title="Downvote post" type="submit">▼</button>
+          <button class="{{ 'vote-active-up' if post_votes.get(post.id) == 1 else '' }}" name="value" value="1" title="Upvote post" aria-label="Upvote post" type="submit">▲</button>
+          <span data-score>{{ post.score }}</span>
+          <button class="{{ 'vote-active-down' if post_votes.get(post.id) == -1 else '' }}" name="value" value="-1" title="Downvote post" aria-label="Downvote post" type="submit">▼</button>
         </form>
         <div class="post-content">
           {% if post.is_pinned or post.is_locked %}
@@ -25,11 +25,22 @@
             Posted by <a href="{{ url_for('forum.profile', username=post.author.username) }}">{{ post.author.username }}</a> ·
             {{ post.created_at.strftime("%b %d, %Y at %I:%M %p") }}
           </div>
-          {% if current_user.is_authenticated %}
-            <div class="detail-actions">
-              <form action="{{ url_for('forum.save_post', post_id=post.id) }}" method="post" class="detail-save-form">
+          <div class="detail-actions">
+            {% if current_user.is_authenticated and can_moderate_post(post) %}
+              <form action="{{ url_for('forum.toggle_pin_post', post_id=post.id) }}" method="post" class="admin-inline-action">
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-                <button class="save-button {{ 'saved' if post.id in saved_posts else '' }}" type="submit">
+                <button class="button {{ 'button-ghost' if post.is_pinned else 'button-primary' }}" type="submit">
+                  {{ 'Unpin Post' if post.is_pinned else 'Pin Post' }}
+                </button>
+              </form>
+            {% endif %}
+            <button class="button button-ghost" type="button" data-copy-link="{{ request.url }}">Copy Link</button>
+            <a class="button button-ghost" href="{{ url_for('forum.community_detail', slug=post.community.slug) }}">More in c/{{ post.community.slug }}</a>
+          {% if current_user.is_authenticated %}
+            <div class="detail-actions-inner">
+              <form action="{{ url_for('forum.save_post', post_id=post.id) }}" method="post" class="detail-save-form" data-async-action="save">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                <button class="save-button {{ 'saved' if post.id in saved_posts else '' }}" type="submit" data-saved-label="Saved" data-unsaved-label="Save Post">
                   {{ 'Saved' if post.id in saved_posts else 'Save Post' }}
                 </button>
               </form>
@@ -43,7 +54,8 @@
               </details>
             </div>
           {% endif %}
-          {% if current_user.is_authenticated and (post.author == current_user or current_user.is_admin) %}
+          </div>
+          {% if current_user.is_authenticated and (post.author == current_user or can_moderate_post(post)) %}
             <div class="owner-actions">
               <a class="button button-ghost" href="{{ url_for('forum.edit_post', post_id=post.id) }}">Edit</a>
               <form action="{{ url_for('forum.delete_post', post_id=post.id) }}" method="post">
@@ -56,12 +68,13 @@
             <img class="post-image-full" src="{{ url_for('static', filename='uploads/' ~ post.image_filename) }}" alt="Image for {{ post.title }}">
           {% endif %}
           <p>{{ post.body }}</p>
+          {% include "forum/_poll.html" %}
         </div>
       </article>
 
       <section class="comment-composer">
         <h2>Join the discussion</h2>
-        {% if post.is_locked and not current_user.is_admin %}
+        {% if post.is_locked and not can_moderate_post(post) %}
           <p class="muted">This thread is locked. New comments are closed.</p>
         {% elif current_user.is_authenticated %}
           <form class="form" method="post">
@@ -76,7 +89,14 @@
       </section>
 
       <section class="comments">
-        <h2>{{ comments|length }} comments</h2>
+        <div class="comments-header">
+          <h2>{{ comments|length }} comments</h2>
+          <nav class="segmented comment-sort" aria-label="Comment sorting">
+            <a class="{{ 'active' if comment_sort == 'top' else '' }}" href="{{ url_for('forum.post_detail', post_id=post.id, comments='top') }}">Top</a>
+            <a class="{{ 'active' if comment_sort == 'new' else '' }}" href="{{ url_for('forum.post_detail', post_id=post.id, comments='new') }}">New</a>
+            <a class="{{ 'active' if comment_sort == 'old' else '' }}" href="{{ url_for('forum.post_detail', post_id=post.id, comments='old') }}">Old</a>
+          </nav>
+        </div>
         {% for comment in top_comments %}
           {% with depth=0 %}
             {% include "forum/_comment.html" %}
@@ -84,6 +104,20 @@
         {% else %}
           <p class="muted">No comments yet.</p>
         {% endfor %}
+      </section>
+
+      <section class="related-posts">
+        <h2>Related posts</h2>
+        <div class="mini-list">
+          {% for related in related_posts %}
+            <article class="clickable-card" data-href="{{ url_for('forum.post_detail', post_id=related.id) }}" tabindex="0">
+              <a href="{{ url_for('forum.post_detail', post_id=related.id) }}">{{ related.title }}</a>
+              <div class="meta">c/{{ related.community.slug }} · {{ related.score }} votes · {{ related.comments|length }} comments</div>
+            </article>
+          {% else %}
+            <p class="muted">No related posts yet.</p>
+          {% endfor %}
+        </div>
       </section>
     </div>
     {% include "forum/_sidebar.html" %}

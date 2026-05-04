@@ -15,12 +15,21 @@
 
   <section class="community-grid">
     {% for community in communities %}
-      <article class="community-card">
-        <div class="community-icon">{{ community.icon }}</div>
-        <a class="community-title" href="{{ url_for('forum.community_detail', slug=community.slug) }}">c/{{ community.slug }}</a>
+      <article class="community-card clickable-card" data-href="{{ url_for('forum.community_detail', slug=community.slug) }}" tabindex="0">
+        <div class="community-icon community-color-{{ loop.index0 % 6 }}">{{ community.icon }}</div>
+        <a class="community-title card-fill-link" href="{{ url_for('forum.community_detail', slug=community.slug) }}">c/{{ community.slug }}</a>
         <p>{{ community.description }}</p>
         <div class="meta">{{ community.posts|length }} posts</div>
       </article>
+    {% else %}
+      <div class="empty-state empty-state-action">
+        <div class="empty-icon">c/</div>
+        <h2>No communities yet</h2>
+        <p>Create the first campus space for classes, clubs, events, or student life.</p>
+        {% if current_user.is_authenticated %}
+          <a class="button button-primary" href="{{ url_for('forum.create_community') }}">Create Community</a>
+        {% endif %}
+      </div>
     {% endfor %}
   </section>
 {% endblock %}

@@ -22,7 +22,7 @@
 
       <label for="post_type">Post type</label>
       <select id="post_type" name="post_type">
-        {% for type in ["discussion", "question", "image", "announcement"] %}
+        {% for type in ["discussion", "question", "poll", "image", "announcement"] %}
           <option value="{{ type }}" {% if post.post_type == type %}selected{% endif %}>{{ type.title() }}</option>
         {% endfor %}
       </select>

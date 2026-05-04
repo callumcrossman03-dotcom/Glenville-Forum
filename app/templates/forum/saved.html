@@ -15,9 +15,11 @@
       {% for post, score, comment_count in posts %}
         {% include "forum/_post_card.html" %}
       {% else %}
-        <div class="empty-state">
+        <div class="empty-state empty-state-action">
+          <div class="empty-icon">☆</div>
           <h2>No saved posts yet</h2>
-          <p>Save useful threads and they will show up here.</p>
+          <p>Save useful threads, class tips, event posts, or campus resources so you can find them again.</p>
+          <a class="button button-primary" href="{{ url_for('forum.index') }}">Browse Feed</a>
         </div>
       {% endfor %}
     </section>

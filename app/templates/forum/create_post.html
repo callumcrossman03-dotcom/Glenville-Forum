@@ -3,38 +3,76 @@
 {% block title %}New Post - Glenville State Forums{% endblock %}
 
 {% block content %}
-  <section class="composer">
-    <h1>Create post</h1>
-    <form class="form" method="post" enctype="multipart/form-data">
-      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-      <label for="community_id">Community</label>
-      <select id="community_id" name="community_id" required>
-        <option value="">Choose a community</option>
-        {% for community in communities %}
-          <option value="{{ community.id }}">c/{{ community.slug }} - {{ community.name }}</option>
-        {% endfor %}
-      </select>
+  <section class="composer composer-wide">
+    <div class="composer-heading">
+      <div>
+        <h1>Create post</h1>
+        <p class="muted">Choose a format, add the details, and publish something students can use.</p>
+      </div>
+    </div>
 
-      <label for="title">Title</label>
-      <input id="title" name="title" type="text" maxlength="180" required>
+    <div class="composer-grid">
+      <form class="form composer-form" method="post" enctype="multipart/form-data">
+        <div class="composer-tabs" role="tablist" aria-label="Post format">
+          <button type="button" data-post-type-tab="discussion" class="active">Text</button>
+          <button type="button" data-post-type-tab="image">Image</button>
+          <button type="button" data-post-type-tab="poll">Poll</button>
+          <a href="{{ url_for('forum.events') }}#title">Event</a>
+          <button type="button" data-post-type-tab="question">Question</button>
+        </div>
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+        <label for="community_id">Community</label>
+        <select id="community_id" name="community_id" required>
+          <option value="">Choose a community</option>
+          {% for community in communities %}
+            <option value="{{ community.id }}">c/{{ community.slug }} - {{ community.name }}</option>
+          {% endfor %}
+        </select>
 
-      <label for="post_type">Post type</label>
-      <select id="post_type" name="post_type">
-        <option value="discussion">Discussion</option>
-        <option value="question">Question</option>
-        <option value="image">Image</option>
-        <option value="announcement">Announcement</option>
-      </select>
+        <label for="title">Title</label>
+        <input id="title" name="title" type="text" maxlength="180" placeholder="What should students know?" value="{{ form_data.get('title', '') }}" data-preview-title required>
 
-      <label for="body">Post</label>
-      <textarea id="body" name="body" rows="10" maxlength="5000" required></textarea>
-      <div class="char-counter"><span data-count-for="body">0</span>/5000</div>
+        <label for="post_type" class="visually-soft">Post type</label>
+        <select id="post_type" name="post_type" data-preview-type>
+          <option value="discussion" {% if form_data.get("post_type") == "discussion" %}selected{% endif %}>Discussion</option>
+          <option value="question" {% if form_data.get("post_type") == "question" %}selected{% endif %}>Question</option>
+          <option value="poll" {% if form_data.get("post_type") == "poll" %}selected{% endif %}>Poll</option>
+          <option value="image" {% if form_data.get("post_type") == "image" %}selected{% endif %}>Image</option>
+          <option value="announcement" {% if form_data.get("post_type") == "announcement" %}selected{% endif %}>Announcement</option>
+        </select>
+        <p class="field-help">Use anonymous polls when you want students to choose an answer, questions when you need help, and image posts when the picture is the main point.</p>
 
-      <label for="image">Image</label>
-      <input id="image" name="image" type="file" accept="image/png,image/jpeg,image/gif,image/webp">
-      <img class="image-preview" alt="Selected image preview" hidden>
+        <label for="body">Post</label>
+        <textarea id="body" name="body" rows="10" maxlength="5000" placeholder="Add details, timing, location, links, or what you have already tried." data-preview-body required>{{ form_data.get("body", "") }}</textarea>
+        <div class="char-counter"><span data-count-for="body">0</span>/5000</div>
 
-      <button class="button button-primary" type="submit">Publish</button>
-    </form>
+        <div class="poll-fields" data-poll-fields>
+          <label for="poll_options">Poll choices</label>
+          <textarea id="poll_options" name="poll_options" rows="5" maxlength="1000" placeholder="One answer per line
+Yes
+No
+Maybe">{{ form_data.get("poll_options", "") }}</textarea>
+          <p class="field-help">Add 2 to 8 choices. Responses are anonymous, and people can change their response later.</p>
+        </div>
+
+        <label for="image">Image</label>
+        <div class="upload-dropzone" data-image-fields>
+          <input id="image" name="image" type="file" accept="image/png,image/jpeg,image/gif,image/webp">
+          <span>PNG, JPG, GIF, or WEBP up to 8MB</span>
+          <img class="image-preview" alt="Selected image preview" hidden>
+        </div>
+
+        <button class="button button-primary" type="submit">Publish</button>
+      </form>
+
+      <aside class="composer-preview" aria-live="polite">
+        <div class="sidebar-title">Preview</div>
+        <article class="preview-card">
+          <span class="type-pill" data-preview-type-output>discussion</span>
+          <h2 data-preview-title-output>Post title preview</h2>
+          <p data-preview-body-output>Your post text will appear here as you write.</p>
+        </article>
+      </aside>
+    </div>
   </section>
 {% endblock %}

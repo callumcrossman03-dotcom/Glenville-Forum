@@ -3,36 +3,72 @@
 {% block title %}c/{{ community.slug }} - Glenville State Forums{% endblock %}
 
 {% block content %}
-  <section class="feed-header">
-    <div>
-      <h1>c/{{ community.slug }}</h1>
-      <p>{{ community.description }}</p>
+  <section class="community-hero community-banner-theme-{{ community.slug }}">
+    <div class="community-banner">
+      <span class="community-banner-icon">{{ community.icon }}</span>
+      <div>
+        <h1>c/{{ community.slug }}</h1>
+        <p>{{ community.description }}</p>
+      </div>
+    </div>
+    <div class="community-stats">
+      <div><strong>{{ member_count }}</strong><span>members</span></div>
+      <div><strong>{{ total_posts }}</strong><span>posts</span></div>
+      <div><strong>{{ moderators|length }}</strong><span>community mods</span></div>
     </div>
     <div class="header-actions">
       {% if current_user.is_authenticated %}
         <form action="{{ url_for('forum.toggle_membership', slug=community.slug) }}" method="post">
           <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-          <button class="button {{ 'button-ghost' if is_joined else 'button-primary' }}" type="submit">
-            {{ 'Joined' if is_joined else 'Join' }}
-          </button>
+          <button class="button {{ 'button-ghost' if is_joined else 'button-primary' }}" type="submit">{{ 'Joined' if is_joined else 'Join' }}</button>
         </form>
       {% endif %}
-      <div class="segmented">
-        <a class="{{ 'active' if sort == 'hot' else '' }}" href="{{ url_for('forum.community_detail', slug=community.slug, sort='hot', q=search) }}">Hot</a>
-        <a class="{{ 'active' if sort == 'new' else '' }}" href="{{ url_for('forum.community_detail', slug=community.slug, sort='new', q=search) }}">New</a>
-        <a class="{{ 'active' if sort == 'top' else '' }}" href="{{ url_for('forum.community_detail', slug=community.slug, sort='top', q=search) }}">Top</a>
-        <a class="{{ 'active' if sort == 'comments' else '' }}" href="{{ url_for('forum.community_detail', slug=community.slug, sort='comments', q=search) }}">Comments</a>
-      </div>
+      <a class="button button-primary" href="{{ url_for('forum.create_post') }}">New Post</a>
     </div>
   </section>
+
+  <section class="community-info-grid">
+    <article class="sidebar-panel">
+      <div class="sidebar-title">Community Rules</div>
+      <ol class="rules-list">
+        <li>Keep posts useful and respectful.</li>
+        <li>Use clear titles and choose the right post type.</li>
+        <li>No spam, harassment, or unsafe meetups.</li>
+      </ol>
+    </article>
+    <article class="sidebar-panel">
+      <div class="sidebar-title">Moderators</div>
+      <div class="mod-list">
+        {% for moderator in moderators %}
+          <a href="{{ url_for('forum.profile', username=moderator.username) }}">{{ moderator.username }}</a>
+        {% else %}
+          <p class="muted">No moderators listed.</p>
+        {% endfor %}
+      </div>
+    </article>
+    {% if pinned_intro %}
+      <article class="sidebar-panel pinned-intro clickable-card" data-href="{{ url_for('forum.post_detail', post_id=pinned_intro.id) }}" tabindex="0">
+        <div class="sidebar-title">Pinned Intro</div>
+        <a class="card-fill-link" href="{{ url_for('forum.post_detail', post_id=pinned_intro.id) }}">{{ pinned_intro.title }}</a>
+        <p>{{ pinned_intro.body[:160] }}{% if pinned_intro.body|length > 160 %}...{% endif %}</p>
+      </article>
+    {% endif %}
+  </section>
+
+  <div class="segmented community-sort-tabs">
+    <a class="{{ 'active' if sort == 'hot' else '' }}" href="{{ url_for('forum.community_detail', slug=community.slug, sort='hot', q=search) }}">Hot</a>
+    <a class="{{ 'active' if sort == 'new' else '' }}" href="{{ url_for('forum.community_detail', slug=community.slug, sort='new', q=search) }}">New</a>
+    <a class="{{ 'active' if sort == 'top' else '' }}" href="{{ url_for('forum.community_detail', slug=community.slug, sort='top', q=search) }}">Top</a>
+    <a class="{{ 'active' if sort == 'comments' else '' }}" href="{{ url_for('forum.community_detail', slug=community.slug, sort='comments', q=search) }}">Comments</a>
+  </div>
 
   <form class="search-bar" action="{{ url_for('forum.community_detail', slug=community.slug) }}" method="get">
     <input type="hidden" name="sort" value="{{ sort }}">
     <label for="q">Search</label>
     <input id="q" name="q" type="search" value="{{ search }}" placeholder="Search c/{{ community.slug }}">
-    <select name="type">
+    <select name="type" aria-label="Post type">
       <option value="">Any type</option>
-      {% for type in ["discussion", "question", "image", "announcement"] %}
+      {% for type in ["discussion", "question", "poll", "image", "announcement"] %}
         <option value="{{ type }}" {% if post_type == type %}selected{% endif %}>{{ type.title() }}</option>
       {% endfor %}
     </select>
@@ -45,7 +81,8 @@
       {% for post, score, comment_count in posts %}
         {% include "forum/_post_card.html" %}
       {% else %}
-        <div class="empty-state">
+        <div class="empty-state empty-state-action">
+          <div class="empty-icon">c/</div>
           <h2>No posts here yet</h2>
           <p>Start the first thread in c/{{ community.slug }}.</p>
           {% if current_user.is_authenticated %}
@@ -55,13 +92,9 @@
       {% endfor %}
       {% if total_pages > 1 %}
         <nav class="pagination-bar" aria-label="Pagination">
-          {% if page > 1 %}
-            <a class="button button-ghost" href="{{ url_for('forum.community_detail', slug=community.slug, sort=sort, q=search, page=page - 1) }}">Previous</a>
-          {% endif %}
+          {% if page > 1 %}<a class="button button-ghost" href="{{ url_for('forum.community_detail', slug=community.slug, sort=sort, q=search, page=page - 1) }}">Previous</a>{% endif %}
           <span>Page {{ page }} of {{ total_pages }}</span>
-          {% if page < total_pages %}
-            <a class="button button-ghost" href="{{ url_for('forum.community_detail', slug=community.slug, sort=sort, q=search, page=page + 1) }}">Next</a>
-          {% endif %}
+          {% if page < total_pages %}<a class="button button-ghost" href="{{ url_for('forum.community_detail', slug=community.slug, sort=sort, q=search, page=page + 1) }}">Next</a>{% endif %}
         </nav>
       {% endif %}
     </section>

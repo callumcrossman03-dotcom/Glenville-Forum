@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Choose Communities - Glenville State Forums{% endblock %}
+
+{% block content %}
+  <section class="onboarding-shell">
+    <div class="onboarding-hero">
+      <span class="hero-kicker">Welcome to campus</span>
+      <h1>Choose your communities</h1>
+      <p>Pick the spaces you care about so your joined feed starts useful right away.</p>
+    </div>
+    <form class="onboarding-grid" method="post">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+      {% for community in communities %}
+        <label class="onboarding-card community-color-border-{{ loop.index0 % 6 }}">
+          <input type="checkbox" name="community_ids" value="{{ community.id }}" {% if community.id in joined_ids %}checked{% endif %}>
+          <span class="community-icon-mini community-color-{{ loop.index0 % 6 }}">{{ community.icon }}</span>
+          <span>
+            <strong>c/{{ community.slug }}</strong>
+            <small>{{ community.description }}</small>
+          </span>
+        </label>
+      {% endfor %}
+      <div class="onboarding-actions">
+        <a class="button button-ghost" href="{{ url_for('forum.index') }}">Skip for now</a>
+        <button class="button button-primary" type="submit">Personalize Feed</button>
+      </div>
+    </form>
+  </section>
+{% endblock %}

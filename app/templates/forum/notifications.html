@@ -6,29 +6,48 @@
   <section class="feed-header">
     <div>
       <h1>Notifications</h1>
-      <p>Replies and activity connected to your posts.</p>
+      <p>Replies, messages, and activity connected to your posts.</p>
     </div>
     <form action="{{ url_for('forum.mark_notifications_read') }}" method="post">
       <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-      <button class="button button-primary" type="submit">Mark Read</button>
+      <button class="button button-primary" type="submit">Mark All Read</button>
     </form>
   </section>
 
+  <nav class="segmented notification-tabs" aria-label="Notification filters">
+    {% for label, value in [("All", "all"), ("Unread", "unread"), ("Comments", "comments"), ("Posts", "posts"), ("Messages", "messages")] %}
+      <a class="{{ 'active' if category == value else '' }}" href="{{ url_for('forum.notifications', category=value) }}">{{ label }}</a>
+    {% endfor %}
+  </nav>
+
   <section class="notification-list">
     {% for notification in notifications %}
-      <article class="notification-item {{ 'unread' if not notification.read_at else '' }}">
+      <article class="notification-item {{ 'unread' if not notification.read_at else '' }}{% if notification.post %} clickable-card{% endif %}"{% if notification.post %} data-href="{{ url_for('forum.post_detail', post_id=notification.post.id) }}" tabindex="0"{% endif %}>
         <div>
+          <span class="notification-category">
+            {% if notification.comment %}Comment{% elif 'message' in notification.message|lower %}Message{% elif notification.post %}Post{% else %}Update{% endif %}
+          </span>
           <strong>{{ notification.message }}</strong>
           <div class="meta">{{ notification.created_at.strftime("%b %d, %Y at %I:%M %p") }}</div>
         </div>
-        {% if notification.post %}
-          <a class="button button-ghost" href="{{ url_for('forum.post_detail', post_id=notification.post.id) }}">Open</a>
-        {% endif %}
+        <div class="notification-actions">
+          {% if notification.post %}
+            <a class="button button-ghost" href="{{ url_for('forum.post_detail', post_id=notification.post.id) }}">Open</a>
+          {% endif %}
+          {% if not notification.read_at %}
+            <form action="{{ url_for('forum.mark_notification_read', notification_id=notification.id) }}" method="post">
+              <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+              <button class="button button-ghost" type="submit">Mark Read</button>
+            </form>
+          {% endif %}
+        </div>
       </article>
     {% else %}
-      <div class="empty-state">
-        <h2>No notifications yet</h2>
-        <p>When people comment or reply, you will see it here.</p>
+      <div class="empty-state empty-state-action">
+        <div class="empty-icon">✓</div>
+        <h2>No notifications here</h2>
+        <p>Try another filter, or jump back into the feed to start a conversation.</p>
+        <a class="button button-primary" href="{{ url_for('forum.index') }}">Back to Feed</a>
       </div>
     {% endfor %}
   </section>

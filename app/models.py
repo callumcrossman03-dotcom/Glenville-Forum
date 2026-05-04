@@ -24,8 +24,10 @@ class User(UserMixin, db.Model):
     posts = db.relationship("Post", back_populates="author", cascade="all, delete-orphan")
     comments = db.relationship("Comment", back_populates="author", cascade="all, delete-orphan")
     votes = db.relationship("Vote", back_populates="user", cascade="all, delete-orphan")
+    poll_votes = db.relationship("PollVote", back_populates="user", cascade="all, delete-orphan")
     saved_posts = db.relationship("SavedPost", back_populates="user", cascade="all, delete-orphan")
     memberships = db.relationship("CommunityMembership", back_populates="user", cascade="all, delete-orphan")
+    moderated_communities = db.relationship("CommunityModerator", back_populates="user", cascade="all, delete-orphan")
     notifications = db.relationship(
         "Notification",
         back_populates="user",
@@ -62,7 +64,26 @@ class Community(db.Model):
 
     posts = db.relationship("Post", back_populates="community", cascade="all, delete-orphan")
     memberships = db.relationship("CommunityMembership", back_populates="community", cascade="all, delete-orphan")
+    moderators = db.relationship("CommunityModerator", back_populates="community", cascade="all, delete-orphan")
     creator = db.relationship("User")
+
+
+class CommunityModerator(db.Model):
+    __tablename__ = "community_moderators"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    community_id = db.Column(db.Integer, db.ForeignKey("communities.id", ondelete="CASCADE"), nullable=False, index=True)
+    role = db.Column(db.String(20), default="moderator", nullable=False)
+    created_at = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+
+    user = db.relationship("User", back_populates="moderated_communities")
+    community = db.relationship("Community", back_populates="moderators")
+
+    __table_args__ = (
+        db.UniqueConstraint("user_id", "community_id", name="uq_user_community_moderator"),
+        db.CheckConstraint("role IN ('owner', 'moderator')", name="ck_community_moderator_role"),
+    )
 
 
 class Post(db.Model):
@@ -85,6 +106,7 @@ class Post(db.Model):
     votes = db.relationship("Vote", back_populates="post", cascade="all, delete-orphan")
     saves = db.relationship("SavedPost", back_populates="post", cascade="all, delete-orphan")
     reports = db.relationship("Report", back_populates="post", cascade="all, delete-orphan")
+    poll_options = db.relationship("PollOption", back_populates="post", cascade="all, delete-orphan", order_by="PollOption.position")
 
     @property
     def score(self):
@@ -141,6 +163,39 @@ class Vote(db.Model):
         ),
         db.CheckConstraint("value IN (-1, 1)", name="ck_vote_value"),
     )
+
+
+class PollOption(db.Model):
+    __tablename__ = "poll_options"
+
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey("posts.id", ondelete="CASCADE"), nullable=False, index=True)
+    text = db.Column(db.String(160), nullable=False)
+    position = db.Column(db.Integer, nullable=False, default=0)
+    created_at = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+
+    post = db.relationship("Post", back_populates="poll_options")
+    votes = db.relationship("PollVote", back_populates="option", cascade="all, delete-orphan")
+
+    @property
+    def vote_count(self):
+        return len(self.votes)
+
+
+class PollVote(db.Model):
+    __tablename__ = "poll_votes"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    post_id = db.Column(db.Integer, db.ForeignKey("posts.id", ondelete="CASCADE"), nullable=False, index=True)
+    option_id = db.Column(db.Integer, db.ForeignKey("poll_options.id", ondelete="CASCADE"), nullable=False, index=True)
+    created_at = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+
+    user = db.relationship("User", back_populates="poll_votes")
+    post = db.relationship("Post")
+    option = db.relationship("PollOption", back_populates="votes")
+
+    __table_args__ = (db.UniqueConstraint("user_id", "post_id", name="uq_user_poll_vote"),)
 
 
 class SavedPost(db.Model):

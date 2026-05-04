@@ -3,40 +3,53 @@
 {% block title %}{{ user.username }} - Glenville State Forums{% endblock %}
 
 {% block content %}
-  <section class="profile-header">
+  <section class="profile-header profile-hero">
+    <div class="profile-cover-strip"></div>
     <div class="profile-identity">
-      <span class="avatar avatar-large" style="background: {{ user.avatar_color }}">{{ user.initials }}</span>
+      <span class="avatar avatar-xl" style="background: {{ user.avatar_color }}">{{ user.initials }}</span>
       <div>
-        <h1>{{ user.username }}</h1>
-        {% if user.display_name %}<p>{{ user.display_name }}</p>{% endif %}
+        <h1>{{ user.public_name }}</h1>
+        <p class="muted">@{{ user.username }} · Member since {{ user.created_at.strftime("%b %d, %Y") }}</p>
         {% if user.bio %}<p>{{ user.bio }}</p>{% endif %}
-        <p>Member since {{ user.created_at.strftime("%b %d, %Y") }}</p>
+        <div class="badge-row">
+          {% for badge in badges %}
+            <span class="profile-badge">{{ badge }}</span>
+          {% endfor %}
+        </div>
       </div>
     </div>
-    <div class="stats-grid">
-      <div>
-        <strong>{{ post_karma + comment_karma }}</strong>
-        <span>Total karma</span>
-      </div>
-      <div>
-        <strong>{{ post_karma }}</strong>
-        <span>Post karma</span>
-      </div>
-      <div>
-        <strong>{{ comment_karma }}</strong>
-        <span>Comment karma</span>
-      </div>
+    <div class="stats-grid karma-grid">
+      <div><strong>{{ total_karma }}</strong><span>Total karma</span></div>
+      <div><strong>{{ post_karma }}</strong><span>Post karma</span></div>
+      <div><strong>{{ comment_karma }}</strong><span>Comment karma</span></div>
+      <div><strong>{{ joined_communities|length }}</strong><span>Communities</span></div>
+      <div><strong>{{ event_count }}</strong><span>Events</span></div>
     </div>
   </section>
 
-  <section class="profile-columns">
+  <section class="profile-columns profile-columns-three">
+    <div>
+      <h2>Joined communities</h2>
+      <div class="mini-list">
+        {% for community in joined_communities %}
+          <article class="clickable-card" data-href="{{ url_for('forum.community_detail', slug=community.slug) }}" tabindex="0">
+            <span class="community-icon-mini community-color-{{ loop.index0 % 6 }}">{{ community.icon }}</span>
+            <a href="{{ url_for('forum.community_detail', slug=community.slug) }}">c/{{ community.slug }}</a>
+            <div class="meta">{{ community.description }}</div>
+          </article>
+        {% else %}
+          <p class="muted">No joined communities yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+
     <div>
       <h2>Recent posts</h2>
       <div class="mini-list">
         {% for post in recent_posts %}
-          <article>
+          <article class="clickable-card" data-href="{{ url_for('forum.post_detail', post_id=post.id) }}" tabindex="0">
             <a href="{{ url_for('forum.post_detail', post_id=post.id) }}">{{ post.title }}</a>
-            <div class="meta">c/{{ post.community.slug }} · {{ post.created_at.strftime("%b %d, %Y") }}</div>
+            <div class="meta">c/{{ post.community.slug }} · {{ post.created_at.strftime("%b %d, %Y") }} · {{ post.score }} karma</div>
           </article>
         {% else %}
           <p class="muted">No posts yet.</p>
@@ -48,10 +61,10 @@
       <h2>Recent comments</h2>
       <div class="mini-list">
         {% for comment in recent_comments %}
-          <article>
+          <article class="clickable-card" data-href="{{ url_for('forum.post_detail', post_id=comment.post_id) }}" tabindex="0">
             <a href="{{ url_for('forum.post_detail', post_id=comment.post_id) }}">{{ comment.post.title }}</a>
             <p>{{ comment.body }}</p>
-            <div class="meta">{{ comment.created_at.strftime("%b %d, %Y") }}</div>
+            <div class="meta">{{ comment.created_at.strftime("%b %d, %Y") }} · {{ comment.score }} karma</div>
           </article>
         {% else %}
           <p class="muted">No comments yet.</p>

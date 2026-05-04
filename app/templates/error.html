@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}{{ code }} - Glenville State Forums{% endblock %}
+
+{% block content %}
+  <section class="empty-state empty-state-action error-state">
+    <div class="empty-icon">{{ code }}</div>
+    <h1>{{ title }}</h1>
+    <p>{{ message }}</p>
+    <a class="button button-primary" href="{{ url_for('forum.index') }}">Back to Feed</a>
+  </section>
+{% endblock %}

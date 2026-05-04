@@ -2,7 +2,7 @@ from flask import Blueprint, current_app, flash, redirect, render_template, requ
 from flask_login import current_user, login_user, logout_user
 
 from .models import User, db
-from .security import is_safe_redirect_url
+from .security import clear_attempts, is_safe_redirect_url, too_many_attempts
 
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
@@ -14,6 +14,9 @@ def register():
         return redirect(url_for("forum.index"))
 
     if request.method == "POST":
+        if too_many_attempts("register_attempts", limit=8, window_seconds=300):
+            flash("Too many registration attempts. Please wait a few minutes and try again.", "error")
+            return render_template("auth/register.html"), 429
         username = request.form.get("username", "").strip()
         email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
@@ -30,9 +33,10 @@ def register():
             user.set_password(password)
             db.session.add(user)
             db.session.commit()
+            clear_attempts("register_attempts")
             login_user(user)
-            flash("Welcome aboard. Your account is ready.", "success")
-            return redirect(url_for("forum.index"))
+            flash("Welcome aboard. Pick a few communities to personalize your feed.", "success")
+            return redirect(url_for("forum.onboarding"))
 
     return render_template("auth/register.html")
 
@@ -43,6 +47,9 @@ def login():
         return redirect(url_for("forum.index"))
 
     if request.method == "POST":
+        if too_many_attempts("login_attempts", limit=6, window_seconds=300):
+            flash("Too many sign-in attempts. Please wait a few minutes and try again.", "error")
+            return render_template("auth/login.html"), 429
         username_or_email = request.form.get("username_or_email", "").strip()
         password = request.form.get("password", "")
         user = User.query.filter(
@@ -52,6 +59,7 @@ def login():
         if user is None or not user.check_password(password):
             flash("Invalid username, email, or password.", "error")
         else:
+            clear_attempts("login_attempts")
             login_user(user)
             flash("Signed in successfully.", "success")
             next_url = request.args.get("next")
