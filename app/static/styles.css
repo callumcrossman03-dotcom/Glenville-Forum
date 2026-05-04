@@ -4209,3 +4209,139 @@ a:focus-visible {
   border-color: rgba(226, 226, 226, 0.38) !important;
   color: #E2E2E2 !important;
 }
+
+/* More visible soft dark mode pass */
+[data-theme="dark"] {
+  --bg: #000000;
+  --surface: rgba(136, 139, 141, 0.20);
+  --surface-soft: rgba(136, 139, 141, 0.12);
+  --surface-strong: rgba(136, 139, 141, 0.30);
+  --text: #E2E2E2;
+  --muted: rgba(226, 226, 226, 0.70);
+  --line: rgba(226, 226, 226, 0.24);
+  --primary-soft: rgba(0, 61, 165, 0.24);
+}
+
+[data-theme="dark"] body {
+  background:
+    linear-gradient(180deg, rgba(0, 61, 165, 0.22) 0, rgba(136, 139, 141, 0.18) 260px, rgba(0, 0, 0, 1) 720px),
+    #000000 !important;
+}
+
+[data-theme="dark"] .site-header {
+  background: rgba(0, 0, 0, 0.68) !important;
+  border-bottom-color: rgba(226, 226, 226, 0.22) !important;
+}
+
+[data-theme="dark"] .school-masthead,
+[data-theme="dark"] .nav-strip {
+  background: rgba(136, 139, 141, 0.14) !important;
+}
+
+[data-theme="dark"] .post-card,
+[data-theme="dark"] .post-detail,
+[data-theme="dark"] .comment,
+[data-theme="dark"] .sidebar-panel,
+[data-theme="dark"] .community-card,
+[data-theme="dark"] .event-card,
+[data-theme="dark"] .profile-card,
+[data-theme="dark"] .auth-panel,
+[data-theme="dark"] .composer,
+[data-theme="dark"] .comment-composer,
+[data-theme="dark"] .comments,
+[data-theme="dark"] .empty-state,
+[data-theme="dark"] .admin-panel,
+[data-theme="dark"] .moderation-panel,
+[data-theme="dark"] .notification-item,
+[data-theme="dark"] .filter-panel,
+[data-theme="dark"] .project-card,
+[data-theme="dark"] .project-section,
+[data-theme="dark"] .message-thread,
+[data-theme="dark"] .message-sidebar,
+[data-theme="dark"] .message-compose {
+  background: rgba(136, 139, 141, 0.18) !important;
+  border-color: rgba(226, 226, 226, 0.22) !important;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.26) !important;
+}
+
+[data-theme="dark"] .post-card:nth-of-type(even),
+[data-theme="dark"] .sidebar-panel:nth-of-type(even) {
+  background: rgba(0, 61, 165, 0.12) !important;
+}
+
+[data-theme="dark"] .feed-toggle,
+[data-theme="dark"] .segmented,
+[data-theme="dark"] .pagination-bar,
+[data-theme="dark"] .admin-row,
+[data-theme="dark"] .report-row,
+[data-theme="dark"] .role-list article,
+[data-theme="dark"] .account-menu-panel {
+  background: rgba(136, 139, 141, 0.14) !important;
+  border-color: rgba(226, 226, 226, 0.22) !important;
+}
+
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select,
+[data-theme="dark"] .button,
+[data-theme="dark"] .button-ghost,
+[data-theme="dark"] .vote-button,
+[data-theme="dark"] .account-menu summary,
+[data-theme="dark"] summary,
+[data-theme="dark"] .composer-tab,
+[data-theme="dark"] .composer-format-tab,
+[data-theme="dark"] .poll-option,
+[data-theme="dark"] .sidebar-community,
+[data-theme="dark"] .trending-item,
+[data-theme="dark"] .activity-feed a,
+[data-theme="dark"] .chip,
+[data-theme="dark"] .community-chip,
+[data-theme="dark"] .search-check,
+[data-theme="dark"] .inline-action,
+[data-theme="dark"] .reply-toggle {
+  background: rgba(0, 0, 0, 0.38) !important;
+  border-color: rgba(226, 226, 226, 0.24) !important;
+  color: #E2E2E2 !important;
+}
+
+[data-theme="dark"] .post-card:hover,
+[data-theme="dark"] .community-card:hover,
+[data-theme="dark"] .event-card:hover,
+[data-theme="dark"] .sidebar-panel:hover,
+[data-theme="dark"] .trending-item:hover,
+[data-theme="dark"] .sidebar-community:hover {
+  background: rgba(136, 139, 141, 0.28) !important;
+  border-color: rgba(255, 255, 255, 0.42) !important;
+  transform: translateY(-1px);
+}
+
+[data-theme="dark"] .campus-hero,
+[data-theme="dark"] .community-hero,
+[data-theme="dark"] .project-hero,
+[data-theme="dark"] .auth-brand-panel {
+  background:
+    linear-gradient(135deg, rgba(0, 61, 165, 0.96), rgba(0, 61, 165, 0.72)),
+    #003DA5 !important;
+  border-color: rgba(255, 255, 255, 0.30) !important;
+}
+
+[data-theme="dark"] .campus-news-strip,
+[data-theme="dark"] .button-primary,
+[data-theme="dark"] .segmented a.active,
+[data-theme="dark"] .feed-toggle a.active,
+[data-theme="dark"] .vote-button.active,
+[data-theme="dark"] .trend-rank,
+[data-theme="dark"] .notification-link span {
+  background: #003DA5 !important;
+  color: #FFFFFF !important;
+}
+
+[data-theme="dark"] .meta,
+[data-theme="dark"] .muted,
+[data-theme="dark"] small,
+[data-theme="dark"] .sidebar-community small,
+[data-theme="dark"] .sidebar-event small,
+[data-theme="dark"] .trend-copy small,
+[data-theme="dark"] .activity-feed small {
+  color: rgba(226, 226, 226, 0.66) !important;
+}
