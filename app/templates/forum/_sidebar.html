@@ -23,17 +23,17 @@
       <a class="pulse-link" href="{{ url_for('forum.index', sort='new') }}" aria-label="Open newest campus conversations">
         <strong>{{ trending_posts|length }}</strong>
         <span>new conversations</span>
-        <em>Open</em>
+        <em aria-hidden="true">›</em>
       </a>
       <a class="pulse-link" href="{{ url_for('forum.communities') }}" aria-label="Browse campus communities">
         <strong>{{ suggested_communities|default([])|length }}</strong>
         <span>communities to explore</span>
-        <em>Browse</em>
+        <em aria-hidden="true">›</em>
       </a>
       <a class="pulse-link" href="{{ url_for('forum.index', type='poll') }}" aria-label="View anonymous poll posts">
         <strong>Polls</strong>
         <span>anonymous campus feedback</span>
-        <em>View</em>
+        <em aria-hidden="true">›</em>
       </a>
     </div>
   </section>
