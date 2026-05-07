@@ -4454,3 +4454,38 @@ a:focus-visible {
   background: rgba(136, 139, 141, 0.28) !important;
   border-color: #E2E2E2 !important;
 }
+
+/* Pioneer Pulse explicit navigation controls */
+.pioneer-pulse-panel .pulse-stack .pulse-link {
+  cursor: pointer !important;
+  min-height: 52px;
+  pointer-events: auto !important;
+  position: relative;
+  z-index: 5;
+}
+
+.pioneer-pulse-panel .pulse-stack .pulse-link em {
+  background: #003DA5;
+  border-radius: 999px;
+  color: #FFFFFF;
+  flex: 0 0 auto;
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 950;
+  padding: 4px 8px;
+}
+
+.pioneer-pulse-panel .pulse-stack .pulse-link:hover em {
+  background: #000000;
+  color: #FFFFFF;
+}
+
+[data-theme="dark"] .pioneer-pulse-panel .pulse-stack .pulse-link em {
+  background: #003DA5;
+  color: #FFFFFF;
+}
+
+[data-theme="dark"] .pioneer-pulse-panel .pulse-stack .pulse-link:hover em {
+  background: #FFFFFF;
+  color: #000000;
+}

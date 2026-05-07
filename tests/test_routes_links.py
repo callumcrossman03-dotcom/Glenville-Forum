@@ -96,3 +96,11 @@ def test_no_obvious_copy_typos_in_rendered_homepage(client):
     text = re.sub(r"\s+", " ", response.get_data(as_text=True)).lower()
     forbidden = ["glenvillle", "camups", "comun", "ypu", "semel", "collage"]
     assert not any(word in text for word in forbidden)
+
+
+def test_pioneer_pulse_links_have_destinations(client):
+    response = client.get("/")
+    html = response.get_data(as_text=True)
+    assert 'class="pulse-link" href="/?sort=new"' in html
+    assert 'class="pulse-link" href="/communities"' in html
+    assert 'class="pulse-link" href="/?type=poll"' in html
