@@ -7,7 +7,7 @@
     <div>
       <span class="hero-kicker">Presentation Mode</span>
       <h1>Glenville State Forums</h1>
-      <p>A full-stack campus social forum built with Python Flask, PostgreSQL, authentication, communities, votes, comments, anonymous polls, admin moderation, and a polished Glenville State interface.</p>
+      <p>A full-stack campus social forum built with Python Flask, PostgreSQL, authentication, communities, votes, comments, anonymous polls, scoped moderation roles, deployment health checks, automated tests, and a polished Glenville State interface.</p>
     </div>
     <div class="project-demo-card">
       <span>Demo Login</span>
@@ -38,6 +38,8 @@
         <span>SQLAlchemy</span>
         <span>Flask-Login</span>
         <span>Alembic Migrations</span>
+        <span>Pytest QA Suite</span>
+        <span>Gunicorn/Render Ready</span>
         <span>Bootstrap/CSS</span>
       </div>
     </article>
@@ -49,15 +51,16 @@
         <li>Posts, comments, saves, upvotes and downvotes</li>
         <li>Anonymous polls with live result percentages</li>
         <li>Image uploads with validation and resizing</li>
+        <li>Official Glenville branding with light and dark mode</li>
       </ul>
     </article>
     <article class="project-panel">
       <h2>Advanced Features</h2>
       <ul class="project-list">
-        <li>Admin moderation queue and reports</li>
+        <li>Admin moderation queue, reports, and scoped community moderator roles</li>
         <li>Pin, unpin, lock, edit, and delete tools</li>
-        <li>Notifications and direct messages</li>
-        <li>Events calendar and campus activity sidebar</li>
+        <li>Notifications, unread dropdowns, and direct messages</li>
+        <li>Events calendar, Pioneer Pulse, and campus activity sidebar</li>
         <li>Onboarding flow for joined communities</li>
       </ul>
     </article>
@@ -66,7 +69,7 @@
   <section class="project-architecture">
     <div>
       <h2>Database Design</h2>
-      <p>The app uses relational tables for users, communities, posts, comments, votes, saved posts, poll options, poll votes, events, direct messages, notifications, reports, and memberships.</p>
+      <p>The app uses relational tables for users, communities, community moderators, posts, comments, votes, saved posts, poll options, poll votes, events, direct messages, notifications, reports, and memberships.</p>
     </div>
     <div class="schema-map">
       <span>Users</span>
@@ -77,12 +80,35 @@
       <span>Polls</span>
       <span>Messages</span>
       <span>Reports</span>
+      <span>Moderators</span>
+      <span>Events</span>
     </div>
+  </section>
+
+  <section class="project-section-grid project-quality-grid">
+    <article class="project-panel">
+      <h2>Quality & Testing</h2>
+      <ul class="project-list">
+        <li>17 automated pytest checks for auth, posting, voting, polls, links, uploads, moderation, and security headers</li>
+        <li>Route smoke tests for core pages and internal links</li>
+        <li>Friendly error pages for common failures</li>
+        <li>Health check endpoint at <code>/healthz</code></li>
+      </ul>
+    </article>
+    <article class="project-panel">
+      <h2>Security & Deployment</h2>
+      <ul class="project-list">
+        <li>CSRF protection and safe redirects</li>
+        <li>Password hashing and login/register rate limiting</li>
+        <li>Secure cookie settings and security headers</li>
+        <li>Render/Gunicorn deployment setup with PostgreSQL migrations</li>
+      </ul>
+    </article>
   </section>
 
   <section class="project-impact">
     <h2>Why This Is Impressive</h2>
-    <p>This is not just a static website. It is a working full-stack web application with persistent data, real account sessions, authorization rules, interactive voting, file uploads, moderation workflows, and a user interface tailored to a university community.</p>
+    <p>This is not just a static website. It is a working full-stack web application with persistent data, real account sessions, authorization rules, interactive voting, anonymous polling, file uploads, scoped moderation workflows, deployment readiness, automated QA coverage, and a user interface tailored to a university community.</p>
     <div class="project-actions">
       <a class="button button-primary" href="{{ url_for('forum.index') }}">Open the Forum</a>
       <a class="button button-ghost" href="{{ url_for('forum.create_post') if current_user.is_authenticated else url_for('auth.login') }}">Try Posting</a>
