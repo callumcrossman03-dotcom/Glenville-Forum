@@ -20,18 +20,18 @@
   <section class="sidebar-panel pioneer-pulse-panel">
     <div class="sidebar-title">Pioneer Pulse</div>
     <div class="pulse-stack">
-      <div>
+      <a href="{{ url_for('forum.index', sort='hot') }}">
         <strong>{{ trending_posts|length }}</strong>
         <span>active conversations</span>
-      </div>
-      <div>
+      </a>
+      <a href="{{ url_for('forum.communities') }}">
         <strong>{{ suggested_communities|default([])|length }}</strong>
         <span>communities to explore</span>
-      </div>
-      <div>
+      </a>
+      <a href="{{ url_for('forum.index', type='poll') }}">
         <strong>Polls</strong>
         <span>anonymous campus feedback</span>
-      </div>
+      </a>
     </div>
   </section>
 
