@@ -4238,73 +4238,6 @@ a:focus-visible {
   background: rgba(136, 139, 141, 0.14) !important;
 }
 
-/* Nav dropdown reliability and calmer notification styling */
-.notification-menu,
-.account-menu {
-  isolation: isolate;
-  position: relative;
-  z-index: 80;
-}
-
-.notification-menu[open],
-.account-menu[open] {
-  z-index: 120;
-}
-
-.notification-menu > summary.notification-link,
-.account-menu > summary {
-  align-items: center;
-  border-radius: 8px;
-  display: inline-flex;
-  gap: 8px;
-  min-height: 42px;
-  pointer-events: auto;
-  user-select: none;
-}
-
-.notification-menu > summary.notification-link {
-  background: transparent !important;
-  border: 1px solid transparent !important;
-  box-shadow: none !important;
-  color: var(--primary) !important;
-  padding: 9px 10px;
-}
-
-.notification-menu > summary.notification-link:hover,
-.notification-menu[open] > summary.notification-link {
-  background: var(--primary-soft) !important;
-  border-color: var(--line) !important;
-  color: var(--primary) !important;
-}
-
-.notification-menu-panel,
-.account-menu-panel {
-  pointer-events: auto;
-  z-index: 9999;
-}
-
-.notification-menu:not([open]) .notification-menu-panel,
-.account-menu:not([open]) .account-menu-panel {
-  display: none !important;
-}
-
-.notification-menu[open] .notification-menu-panel,
-.account-menu[open] .account-menu-panel {
-  display: grid !important;
-}
-
-[data-theme="dark"] .notification-menu > summary.notification-link {
-  background: transparent !important;
-  border-color: transparent !important;
-  color: #E2E2E2 !important;
-}
-
-[data-theme="dark"] .notification-menu > summary.notification-link:hover,
-[data-theme="dark"] .notification-menu[open] > summary.notification-link {
-  background: rgba(136, 139, 141, 0.20) !important;
-  border-color: rgba(226, 226, 226, 0.24) !important;
-  color: #FFFFFF !important;
-}
 
 [data-theme="dark"] .post-card,
 [data-theme="dark"] .post-detail,
@@ -4643,3 +4576,72 @@ a:focus-visible {
   background: transparent !important;
   color: #FFFFFF !important;
 }
+
+/* Nav dropdown reliability and calmer notification styling */
+.notification-menu,
+.account-menu {
+  isolation: isolate;
+  position: relative;
+  z-index: 80;
+}
+
+.notification-menu[open],
+.account-menu[open] {
+  z-index: 120;
+}
+
+.notification-menu > summary.notification-link,
+.account-menu > summary {
+  align-items: center;
+  border-radius: 8px;
+  display: inline-flex;
+  gap: 8px;
+  min-height: 42px;
+  pointer-events: auto;
+  user-select: none;
+}
+
+.notification-menu > summary.notification-link {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+  color: var(--primary) !important;
+  padding: 9px 10px;
+}
+
+.notification-menu > summary.notification-link:hover,
+.notification-menu[open] > summary.notification-link {
+  background: var(--primary-soft) !important;
+  border-color: var(--line) !important;
+  color: var(--primary) !important;
+}
+
+.notification-menu-panel,
+.account-menu-panel {
+  pointer-events: auto;
+  z-index: 9999;
+}
+
+.notification-menu:not([open]) .notification-menu-panel,
+.account-menu:not([open]) .account-menu-panel {
+  display: none !important;
+}
+
+.notification-menu[open] .notification-menu-panel,
+.account-menu[open] .account-menu-panel {
+  display: grid !important;
+}
+
+[data-theme="dark"] .notification-menu > summary.notification-link {
+  background: transparent !important;
+  border-color: transparent !important;
+  color: #E2E2E2 !important;
+}
+
+[data-theme="dark"] .notification-menu > summary.notification-link:hover,
+[data-theme="dark"] .notification-menu[open] > summary.notification-link {
+  background: rgba(136, 139, 141, 0.20) !important;
+  border-color: rgba(226, 226, 226, 0.24) !important;
+  color: #FFFFFF !important;
+}
+
