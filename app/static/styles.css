@@ -4363,7 +4363,7 @@ a:focus-visible {
   background: transparent !important;
   border-bottom: 1px solid rgba(136, 139, 141, 0.28) !important;
   box-shadow: none !important;
-  overflow: hidden;
+  overflow: visible !important;
 }
 
 .school-masthead,
@@ -4582,12 +4582,12 @@ a:focus-visible {
 .account-menu {
   isolation: isolate;
   position: relative;
-  z-index: 80;
+  z-index: 2000;
 }
 
 .notification-menu[open],
 .account-menu[open] {
-  z-index: 120;
+  z-index: 3000;
 }
 
 .notification-menu > summary.notification-link,
@@ -4619,6 +4619,7 @@ a:focus-visible {
 .notification-menu-panel,
 .account-menu-panel {
   pointer-events: auto;
+  position: absolute;
   z-index: 9999;
 }
 
@@ -4645,3 +4646,15 @@ a:focus-visible {
   color: #FFFFFF !important;
 }
 
+/* Dropdown clipping fix: menus must be allowed to escape the sticky masthead. */
+.site-header,
+.school-masthead,
+.nav-strip,
+.nav-actions {
+  overflow: visible !important;
+}
+
+.notification-menu-panel,
+.account-menu-panel {
+  top: calc(100% + 10px) !important;
+}
