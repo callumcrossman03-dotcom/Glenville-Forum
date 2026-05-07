@@ -77,6 +77,10 @@ def create_app(config_class=Config):
     app.register_blueprint(auth_bp)
     app.register_blueprint(forum_bp)
 
+    @app.get("/healthz")
+    def healthz():
+        return {"status": "ok"}
+
     @app.errorhandler(400)
     def bad_request(error):
         return render_template("error.html", code=400, title="Bad request", message="Something about that request was not valid. Please go back and try again."), 400
@@ -219,7 +223,7 @@ def seed_demo_data():
         "password123",
         "Glenville Admin",
         "Campus forum moderator.",
-        "#005bab",
+        "#003DA5",
         True,
     )
     ross = get_or_create_user("ross", "ross@example.com", "password123", "Ross", "Business major. Always looking for campus events.", "#1d75d8")

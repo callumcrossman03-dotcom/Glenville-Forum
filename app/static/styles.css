@@ -3623,12 +3623,12 @@ body,
 [data-theme="dark"] .vote-button:hover,
 [data-theme="dark"] .trend-rank,
 [data-theme="dark"] .empty-icon,
-[data-theme="dark"] [data-theme="dark"] [data-theme="dark"] [data-theme="dark"] [data-theme="dark"] [data-theme="dark"] .notification-link span,
+[data-theme="dark"] .notification-link span,
 [data-theme="dark"] .admin-stat-card,
 [data-theme="dark"] .project-stat,
 [data-theme="dark"] .hero-kicker,
 [data-theme="dark"] .pulse-row span,
-[data-theme="dark"] [data-theme="dark"] .logo-mark {
+[data-theme="dark"] .logo-mark {
   background: #003DA5 !important;
   border-color: #003DA5 !important;
   color: #FFFFFF !important;
@@ -4344,4 +4344,98 @@ a:focus-visible {
 [data-theme="dark"] .trend-copy small,
 [data-theme="dark"] .activity-feed small {
   color: rgba(226, 226, 226, 0.66) !important;
+}
+
+/* Live activity uses green presence dots. */
+.activity-dot {
+  background: #147D45 !important;
+  box-shadow: 0 0 0 5px rgba(20, 125, 69, 0.18) !important;
+}
+
+[data-theme="dark"] .activity-dot {
+  background: #147D45 !important;
+  box-shadow: 0 0 0 5px rgba(20, 125, 69, 0.28) !important;
+}
+
+/* Full-width translucent masthead fix */
+.site-header {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(136, 139, 141, 0.28) !important;
+  box-shadow: none !important;
+  overflow: hidden;
+}
+
+.school-masthead,
+.nav-strip {
+  background: rgba(255, 255, 255, 0.72) !important;
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+}
+
+.campus-news-strip {
+  background: rgba(0, 61, 165, 0.82) !important;
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+}
+
+[data-theme="dark"] .site-header {
+  background: transparent !important;
+  border-bottom-color: rgba(226, 226, 226, 0.18) !important;
+  box-shadow: none !important;
+}
+
+[data-theme="dark"] .school-masthead,
+[data-theme="dark"] .nav-strip {
+  background: rgba(0, 0, 0, 0.34) !important;
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+}
+
+[data-theme="dark"] .campus-news-strip {
+  background: rgba(0, 61, 165, 0.72) !important;
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+}
+
+/* Pioneer Pulse sidebar module */
+.pioneer-pulse-panel .pulse-stack {
+  display: grid;
+  gap: 10px;
+}
+
+.pioneer-pulse-panel .pulse-stack div {
+  align-items: center;
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  padding: 10px 12px;
+}
+
+.pioneer-pulse-panel strong {
+  color: var(--primary);
+  font-size: 0.95rem;
+  font-weight: 950;
+}
+
+.pioneer-pulse-panel span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-align: right;
+}
+
+[data-theme="dark"] .pioneer-pulse-panel .pulse-stack div {
+  background: rgba(136, 139, 141, 0.14) !important;
+  border-color: rgba(226, 226, 226, 0.22) !important;
+}
+
+[data-theme="dark"] .pioneer-pulse-panel strong {
+  color: #FFFFFF !important;
+}
+
+[data-theme="dark"] .pioneer-pulse-panel span {
+  color: rgba(226, 226, 226, 0.72) !important;
 }

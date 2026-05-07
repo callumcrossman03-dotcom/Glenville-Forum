@@ -15,7 +15,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(40), unique=True, nullable=False, index=True)
     display_name = db.Column(db.String(80), nullable=True)
     bio = db.Column(db.String(280), nullable=True)
-    avatar_color = db.Column(db.String(20), default="#005bab", nullable=False)
+    avatar_color = db.Column(db.String(20), default="#003DA5", nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(255), nullable=False)
     is_admin = db.Column(db.Boolean, default=False, nullable=False)

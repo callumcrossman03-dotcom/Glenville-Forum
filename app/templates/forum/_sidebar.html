@@ -16,6 +16,25 @@
     </div>
   </section>
 
+  
+  <section class="sidebar-panel pioneer-pulse-panel">
+    <div class="sidebar-title">Pioneer Pulse</div>
+    <div class="pulse-stack">
+      <div>
+        <strong>{{ trending_posts|length }}</strong>
+        <span>active conversations</span>
+      </div>
+      <div>
+        <strong>{{ suggested_communities|default([])|length }}</strong>
+        <span>communities to explore</span>
+      </div>
+      <div>
+        <strong>Polls</strong>
+        <span>anonymous campus feedback</span>
+      </div>
+    </div>
+  </section>
+
   <section class="sidebar-panel live-activity-panel">
     <div class="sidebar-title">Live Campus Activity</div>
     <div class="activity-feed">

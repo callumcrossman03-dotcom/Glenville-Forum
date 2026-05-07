@@ -80,6 +80,7 @@ For Render, Railway, Heroku-style platforms, use these settings:
 
 - Build command: `pip install -r requirements.txt`
 - Start command: `gunicorn "run:app"`
+- Health check path: `/healthz`
 - Required environment variables: `SECRET_KEY`, `DATABASE_URL`, `SESSION_COOKIE_SECURE=1`
 - Release/migration command: `flask --app run.py db upgrade`
 

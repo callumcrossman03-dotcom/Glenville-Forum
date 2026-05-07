@@ -489,7 +489,7 @@ def settings():
         display_name = request.form.get("display_name", "").strip()
         bio = request.form.get("bio", "").strip()
         email = request.form.get("email", "").strip().lower()
-        avatar_color = request.form.get("avatar_color", "#005bab").strip()
+        avatar_color = request.form.get("avatar_color", "#003DA5").strip()
         current_password = request.form.get("current_password", "")
         new_password = request.form.get("new_password", "")
 
@@ -503,7 +503,7 @@ def settings():
             current_user.display_name = display_name or None
             current_user.bio = bio or None
             current_user.email = email
-            current_user.avatar_color = avatar_color if avatar_color.startswith("#") else "#005bab"
+            current_user.avatar_color = avatar_color if avatar_color.startswith("#") else "#003DA5"
             if new_password:
                 current_user.set_password(new_password)
             db.session.commit()
