@@ -104,3 +104,14 @@ def test_pioneer_pulse_links_have_destinations(client):
     assert 'class="pulse-link" href="/?sort=new"' in html
     assert 'class="pulse-link" href="/communities"' in html
     assert 'class="pulse-link" href="/?type=poll"' in html
+
+
+def test_authenticated_nav_dropdowns_render(client):
+    login(client, "admin")
+    response = client.get("/")
+    html = response.get_data(as_text=True)
+    assert response.status_code == 200
+    assert 'details class="notification-menu"' in html
+    assert 'class="notification-menu-panel"' in html
+    assert 'details class="account-menu"' in html
+    assert 'class="account-menu-panel"' in html
